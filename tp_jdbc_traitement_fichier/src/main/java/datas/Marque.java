@@ -16,6 +16,11 @@ public class Marque {
 	public void setNomMarque(String nomMarque) {
 		this.nomMarque = nomMarque;
 	}
+
+	@Override
+	public String toString() {
+		return "Marque [nomMarque=" + nomMarque + "]";
+	}
 	
 	
 

@@ -16,6 +16,12 @@ public class Ingredient {
 	public void setLibelleIngredient(String libelleIngredient) {
 		this.libelleIngredient = libelleIngredient;
 	}
+
+	@Override
+	public String toString() {
+		return "Ingredient [libelleIngredient=" + libelleIngredient + "]";
+	}
+	
 	
 	
 

@@ -16,6 +16,11 @@ public class Allergene {
 	public void setLibelleAllergene(String libelleAllergene) {
 		this.libelleAllergene = libelleAllergene;
 	}
+
+	@Override
+	public String toString() {
+		return "Allergene [libelleAllergene=" + libelleAllergene + "]";
+	}
 	
 	
 	

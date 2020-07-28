@@ -29,12 +29,11 @@ public class Datas {
 				String[] morceaux = lignes.get(i).split("\\|", -1); // Exception trouvée on stackOverflow pour "|"
 				System.out.println("Lignes n°" + i);
 
-				
-				//Gestion Catégories
+				// Gestion Catégories
 				String categorieProduit = morceaux[0];
 				String cleanCategorie = categorieProduit.toLowerCase().replaceAll("[^\\w]\\s", "")
-						.replaceAll("[\\+\\.\\^,*%]", "").replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "")
-						.replace("en:", "").trim();
+						.replaceAll("[\\+\\.\\^,*%]", "").replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ")
+						.replace("fr:", "").replace("en:", "").trim();
 				Categorie newCat = new Categorie(cleanCategorie);
 
 				boolean categorieListed = false;
@@ -46,19 +45,26 @@ public class Datas {
 				if (!categorieListed) {
 					this.listeCategorie.add(newCat);
 				}
-				
-				
-				//Gestion Marque
+
+				// Gestion Marque
 				String marqueProduit = morceaux[1];
-				Marque newMarque = new Marque(marqueProduit);
-				boolean marqueListed = false;
-				for (Marque marque : this.listeMarque) {
-					if (marque.getNomMarque().equals(newMarque.getNomMarque())) {
-						marqueListed = true;
+				String[] elemStringMarque = marqueProduit.split(",");
+				ArrayList<Marque> currentProductMarques = new ArrayList<Marque>();
+				for (String nomMarque : elemStringMarque) {
+					String cleanNomMarque = nomMarque.toLowerCase().replaceAll("[^\\w]\\s", "")
+							.replaceAll("[\\+\\.\\^,*%]", "").replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ")
+							.replace("fr:", "").replace("en:", "").trim();
+					Marque newMarque = new Marque(cleanNomMarque);
+					currentProductMarques.add(newMarque);
+					boolean marqueListed = false;
+					for (Marque marque : this.listeMarque) {
+						if (marque.getNomMarque().equals(newMarque.getNomMarque())) {
+							marqueListed = true;
+						}
 					}
-				}
-				if (!marqueListed) {
-					this.listeMarque.add(newMarque);
+					if (!marqueListed) {
+						this.listeMarque.add(newMarque);
+					}
 				}
 
 				String nomProduit = morceaux[2];
@@ -68,11 +74,11 @@ public class Datas {
 				// Gestion Ingredients
 				String listeIngredientsProduit = morceaux[4]; // Ingredient commence par [ et séparés par une virgule
 				String[] elemStringIngredient = listeIngredientsProduit.split(",");
-				ArrayList<Ingredient> currentProductIngredients = new ArrayList();
+				ArrayList<Ingredient> currentProductIngredients = new ArrayList<Ingredient>();
 				for (String nomIng : elemStringIngredient) {
 					String cleanIngredient = nomIng.toLowerCase().replaceAll("[^\\w]\\s", "")
-							.replaceAll("[\\+\\.\\^,*%]", "").replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "")
-							.replace("en:", "").trim();
+							.replaceAll("[\\+\\.\\^,*%]", "").replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ")
+							.replace("fr:", "").replace("en:", "").trim();
 					Ingredient newIngredient = new Ingredient(cleanIngredient);
 					currentProductIngredients.add(newIngredient);
 
@@ -107,11 +113,11 @@ public class Datas {
 
 				String listeAllergenes = morceaux[28];
 				String[] elemStringAllergenes = listeAllergenes.split(",");
-				ArrayList<Allergene> currentProductAllergenes = new ArrayList();
+				ArrayList<Allergene> currentProductAllergenes = new ArrayList<Allergene>();
 				for (String nomAll : elemStringAllergenes) {
 					String cleanAllergene = nomAll.toLowerCase().replaceAll("[^\\w]\\s", "")
-							.replaceAll("[\\+\\.\\^,*%]", "").replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "")
-							.replace("en:", "").trim();
+							.replaceAll("[\\+\\.\\^,*%]", "").replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ")
+							.replace("fr:", "").replace("en:", "").trim();
 					Allergene newAllergene = new Allergene(cleanAllergene);
 					currentProductAllergenes.add(newAllergene);
 
@@ -149,8 +155,8 @@ public class Datas {
 					}
 				}
 
-				Produit currentProduit = new Produit(newCat, newMarque, nomProduit, gradeNutriProduit, nutri,
-						currentProductIngredients, currentProductAllergenes, currentProductAdditifs);
+				Produit currentProduit = new Produit(newCat, currentProductMarques, nomProduit, gradeNutriProduit,
+						nutri, currentProductIngredients, currentProductAllergenes, currentProductAdditifs);
 				listeProduit.add(currentProduit);
 
 				System.out.println(currentProduit.toString());
@@ -194,10 +200,10 @@ public class Datas {
 			System.out.println(cat.getLibelleCategorie());
 		}
 	}
-	
+
 	public void printListeMarques() {
-		for ( Marque marque : this.listeMarque) {
-			System.out.println( marque.getNomMarque() );
+		for (Marque marque : this.listeMarque) {
+			System.out.println(marque.getNomMarque());
 		}
 	}
 }

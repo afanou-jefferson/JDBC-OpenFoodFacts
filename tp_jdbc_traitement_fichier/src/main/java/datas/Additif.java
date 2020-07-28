@@ -16,6 +16,12 @@ public class Additif {
 	public void setLibelleAdditif(String libelleAdditif) {
 		this.libelleAdditif = libelleAdditif;
 	}
+
+	@Override
+	public String toString() {
+		return "Additif [libelleAdditif=" + libelleAdditif + "]";
+	}
+	
 	
 	
 
