@@ -1,4 +1,4 @@
-package datas;
+ package datas;
 
 import java.util.ArrayList;
 
@@ -34,6 +34,70 @@ public class Produit {
 		return "Produit [categorie=" + categorie.getLibelleCategorie() + ", marque=" + marques + ", NomProduit=" + NomProduit + ", gradeNutri="
 				+ gradeNutri + ", donneesNutri=" + donneesNutri + ", listIngredients=" + ArrayListToString.getStringArrayList(this.listIngredients)
 				+ ", listAllergenes=" + ArrayListToString.getStringArrayList(this.listAllergenes) + ", listAdditifs=" + ArrayListToString.getStringArrayList(this.listAdditifs) + "]";
+	}
+
+	public Categorie getCategorie() {
+		return categorie;
+	}
+
+	public void setCategorie(Categorie categorie) {
+		this.categorie = categorie;
+	}
+
+	public ArrayList<Marque> getMarques() {
+		return marques;
+	}
+
+	public void setMarques(ArrayList<Marque> marques) {
+		this.marques = marques;
+	}
+
+	public String getNomProduit() {
+		return NomProduit;
+	}
+
+	public void setNomProduit(String nomProduit) {
+		NomProduit = nomProduit;
+	}
+
+	public String getGradeNutri() {
+		return gradeNutri;
+	}
+
+	public void setGradeNutri(String gradeNutri) {
+		this.gradeNutri = gradeNutri;
+	}
+
+	public donneesNutritionnelles getDonneesNutri() {
+		return donneesNutri;
+	}
+
+	public void setDonneesNutri(donneesNutritionnelles donneesNutri) {
+		this.donneesNutri = donneesNutri;
+	}
+
+	public ArrayList<Ingredient> getListIngredients() {
+		return listIngredients;
+	}
+
+	public void setListIngredients(ArrayList<Ingredient> listIngredients) {
+		this.listIngredients = listIngredients;
+	}
+
+	public ArrayList<Allergene> getListAllergenes() {
+		return listAllergenes;
+	}
+
+	public void setListAllergenes(ArrayList<Allergene> listAllergenes) {
+		this.listAllergenes = listAllergenes;
+	}
+
+	public ArrayList<Additif> getListAdditifs() {
+		return listAdditifs;
+	}
+
+	public void setListAdditifs(ArrayList<Additif> listAdditifs) {
+		this.listAdditifs = listAdditifs;
 	}
 	
 	

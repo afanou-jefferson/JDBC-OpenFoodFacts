@@ -1,6 +1,6 @@
 package datas;
 
-public class Categorie {
+public class Categorie implements Entite{
 	
 	private String libelleCategorie;
 
@@ -20,6 +20,12 @@ public class Categorie {
 	@Override
 	public String toString() {
 		return "Categorie [libelleCategorie=" + libelleCategorie + "]";
+	}
+
+	@Override
+	public String getEntite() {
+		// TODO Auto-generated method stub
+		return this.getLibelleCategorie();
 	}
 	
 	

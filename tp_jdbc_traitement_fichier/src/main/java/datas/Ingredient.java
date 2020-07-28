@@ -1,6 +1,6 @@
 package datas;
 
-public class Ingredient {
+public class Ingredient implements Entite{
 	
 	private String libelleIngredient;
 
@@ -22,7 +22,10 @@ public class Ingredient {
 		return "Ingredient [libelleIngredient=" + libelleIngredient + "]";
 	}
 	
-	
+
+	public String getEntite() {
+		return this.getLibelleIngredient();
+	}
 	
 
 }

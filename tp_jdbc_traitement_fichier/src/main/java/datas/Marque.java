@@ -1,6 +1,6 @@
 package datas;
 
-public class Marque {
+public class Marque implements Entite{
 	
 	private String nomMarque;
 
@@ -20,6 +20,10 @@ public class Marque {
 	@Override
 	public String toString() {
 		return "Marque [nomMarque=" + nomMarque + "]";
+	}
+	
+	public String getEntite() {
+		return this.nomMarque;
 	}
 	
 	
