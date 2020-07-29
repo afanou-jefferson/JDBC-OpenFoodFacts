@@ -1,6 +1,6 @@
 package datas;
 
-public class Categorie implements Entite{
+public class Categorie implements Entite{ 
 	
 	private String libelleCategorie;
 

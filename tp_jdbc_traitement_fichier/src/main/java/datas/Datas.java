@@ -53,8 +53,9 @@ public class Datas {
 				Produit currentProduit = new Produit(newCat, currentProductMarques, nomProduit, gradeNutriProduit,
 						nutri, currentProductIngredients, currentProductAllergenes, currentProductAdditifs);
 
-				// On part du principe qu'il n'y a que Produits uniques dans le fichier pour le moment
-				listeProduit.add(currentProduit); 
+				// On part du principe qu'il n'y a que Produits uniques dans le fichier pour le
+				// moment
+				listeProduit.add(currentProduit);
 				// System.out.println(currentProduit.toString());
 			}
 		} catch (IOException e) {
@@ -62,6 +63,7 @@ public class Datas {
 		}
 
 	}
+
 	private ArrayList<Additif> traitementAdditifs(String morceauString) {
 
 		String[] elemStringAdditifss = morceauString.split(",");
@@ -147,9 +149,9 @@ public class Datas {
 	private ArrayList<Ingredient> traitementIngredients(String morceauString) {
 		String[] elemStringIngredient = morceauString.split(",");
 		ArrayList<Ingredient> currentProductIngredients = new ArrayList<Ingredient>();
-		
+
 		for (String nomIng : elemStringIngredient) {
-			
+
 			String cleanIngredient = nomIng.replaceAll("[^\\w]\\s", "").replaceAll("[\\+\\.\\^,*%]", "")
 					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "").replace("en:", "").trim();
 
@@ -164,7 +166,6 @@ public class Datas {
 		}
 		return currentProductIngredients;
 	}
-
 
 	public static boolean isANumber(String chaine) {
 		try {
@@ -204,24 +205,29 @@ public class Datas {
 			System.out.println(marque.getNomMarque());
 		}
 	}
+
 	public ArrayList<Additif> getListeAdditif() {
 		return listeAdditif;
 	}
+
 	public ArrayList<Categorie> getListeCategorie() {
 		return listeCategorie;
 	}
+
 	public ArrayList<Ingredient> getListeIngredient() {
 		return listeIngredient;
 	}
+
 	public ArrayList<Marque> getListeMarque() {
 		return listeMarque;
 	}
+
 	public ArrayList<Produit> getListeProduit() {
 		return listeProduit;
 	}
+
 	public ArrayList<Allergene> getListeAllergene() {
 		return listeAllergene;
 	}
 
-	
 }
