@@ -1,6 +1,6 @@
 package datas;
 
-public class donneesNutritionnelles {
+public class DonneesNutritionnelles {
 	
 	//Public obligé pour le moment pour parcourir les attributs de la classe dynamiquement
 	//TO DO Trouver une technique pour les passer en private mais pouvoir parcourir les attributs de la classe 
@@ -31,12 +31,12 @@ public class donneesNutritionnelles {
 	
 	
 	
-	public donneesNutritionnelles() {}
+	public DonneesNutritionnelles() {}
 
 
 
 
-	public donneesNutritionnelles(double energie100g, double graisse100g, double sucres100g, double fibres100g,
+	public DonneesNutritionnelles(double energie100g, double graisse100g, double sucres100g, double fibres100g,
 			double proteines100g, double sel100g, double vitA100g, double vitD100g, double vitE100g, double vitK100g,
 			double vitC100g, double vitB1_100g, double vitB2_100g, double vitPP100g, double vitB6100g, double vitB9100g,
 			double vitB12100g, double calcium100g, double magnesium100g, double irong100g, double fer100g,

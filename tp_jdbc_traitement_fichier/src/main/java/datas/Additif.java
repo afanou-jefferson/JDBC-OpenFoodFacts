@@ -27,6 +27,12 @@ public class Additif implements Entite{
 		// TODO Auto-generated method stub
 		return this.libelleAdditif;
 	}
+
+	@Override
+	public String getClassEntite() {
+		// TODO Auto-generated method stub
+		return this.getClass().getName();
+	}
 	
 	
 	

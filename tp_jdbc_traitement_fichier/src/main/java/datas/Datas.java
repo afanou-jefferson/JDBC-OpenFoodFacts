@@ -39,7 +39,7 @@ public class Datas {
 				ArrayList<Additif> currentProductAdditifs = traitementAdditifs(morceaux[29]);
 
 				// Gestion donnees Nutritionnelles des indices [5] à [27]
-				donneesNutritionnelles nutri = new donneesNutritionnelles();
+				DonneesNutritionnelles nutri = new DonneesNutritionnelles();
 				int compteurField = 5;
 				for (Field field : nutri.getClass().getDeclaredFields()) {
 					if (Datas.isANumber(morceaux[compteurField])) {
@@ -56,7 +56,8 @@ public class Datas {
 				// On part du principe qu'il n'y a que Produits uniques dans le fichier pour le
 				// moment
 				listeProduit.add(currentProduit);
-				// System.out.println(currentProduit.toString());
+				System.out.println(i);
+				//System.out.println(currentProduit.toString());
 			}
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -66,19 +67,20 @@ public class Datas {
 
 	private ArrayList<Additif> traitementAdditifs(String morceauString) {
 
-		String[] elemStringAdditifss = morceauString.split(",");
+		String[] elemStringAdditifs = morceauString.split(",");
 		ArrayList<Additif> currentProductAdditifs = new ArrayList();
 
-		for (String nomAdd : elemStringAdditifss) {
+		for (String nomAdd : elemStringAdditifs) {
+
 			String cleanAdditif = nomAdd.replaceAll("[^\\w]\\s", "").replaceAll("[\\+\\.\\^,*%]", "")
 					.replaceAll("[\\_\\-]", " ").replace("fr:", "").replace("en:", "").trim();
 
 			if (!CheckStringSimilaire.similaireDejaExistant(cleanAdditif, currentProductAdditifs, 5)) {
-				Additif newAdditifs = new Additif(cleanAdditif);
-				currentProductAdditifs.add(newAdditifs);
+				Additif newAdditif = new Additif(cleanAdditif);
+				currentProductAdditifs.add(newAdditif);
 
-				if (CheckStringSimilaire.similaireDejaExistant(cleanAdditif, this.listeAdditif, 5)) {
-					this.listeAdditif.add(newAdditifs);
+				if (!CheckStringSimilaire.similaireDejaExistant(cleanAdditif, this.listeAdditif, 5)) {
+					this.listeAdditif.add(newAdditif);
 				}
 			}
 		}
@@ -93,11 +95,11 @@ public class Datas {
 			String cleanAllergene = nomAll.replaceAll("[^\\w]\\s", "").replaceAll("[\\+\\.\\^,*%]", "")
 					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "").replace("en:", "").trim();
 
-			if (CheckStringSimilaire.similaireDejaExistant(cleanAllergene, currentProductAllergenes, 5)) {
+			if (!CheckStringSimilaire.similaireDejaExistant(cleanAllergene, currentProductAllergenes, 5)) {
 				Allergene newAllergene = new Allergene(cleanAllergene);
 				currentProductAllergenes.add(newAllergene);
 
-				if (CheckStringSimilaire.similaireDejaExistant(cleanAllergene, listeAllergene, 5)) {
+				if (!CheckStringSimilaire.similaireDejaExistant(cleanAllergene, listeAllergene, 5)) {
 					this.listeAllergene.add(newAllergene);
 				}
 			}
@@ -112,10 +114,7 @@ public class Datas {
 
 		boolean categorieListed = false;
 
-		if (CheckStringSimilaire.similaireDejaExistant(cleanCategorie, this.listeCategorie, 5)) {
-			categorieListed = true;
-		}
-		if (!categorieListed) {
+		if (!CheckStringSimilaire.similaireDejaExistant(cleanCategorie, this.listeCategorie, 5)) {
 			this.listeCategorie.add(newCat);
 		}
 		return newCat;
@@ -155,11 +154,11 @@ public class Datas {
 			String cleanIngredient = nomIng.replaceAll("[^\\w]\\s", "").replaceAll("[\\+\\.\\^,*%]", "")
 					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "").replace("en:", "").trim();
 
-			if (CheckStringSimilaire.similaireDejaExistant(cleanIngredient, currentProductIngredients, 5)) {
+			if (!CheckStringSimilaire.similaireDejaExistant(cleanIngredient, currentProductIngredients, 5)) {
 				Ingredient newIngredient = new Ingredient(cleanIngredient);
 				currentProductIngredients.add(newIngredient);
 
-				if (CheckStringSimilaire.similaireDejaExistant(cleanIngredient, listeIngredient, 5)) {
+				if (!CheckStringSimilaire.similaireDejaExistant(cleanIngredient, listeIngredient, 5)) {
 					this.listeIngredient.add(newIngredient);
 				}
 			}

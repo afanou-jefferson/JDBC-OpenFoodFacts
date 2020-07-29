@@ -28,6 +28,12 @@ public class Categorie implements Entite{
 		return this.getLibelleCategorie();
 	}
 	
+	@Override
+	public String getClassEntite() {
+		// TODO Auto-generated method stub
+		return this.getClass().getName();
+	}
+	
 	
 	
 }

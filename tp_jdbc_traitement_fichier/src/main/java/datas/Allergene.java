@@ -1,6 +1,6 @@
 package datas;
 
-public class Allergene {
+public class Allergene implements Entite{
 	
 	private String libelleAllergene;
 
@@ -20,6 +20,18 @@ public class Allergene {
 	@Override
 	public String toString() {
 		return "Allergene [libelleAllergene=" + libelleAllergene + "]";
+	}
+
+	@Override
+	public String getEntite() {
+		// TODO Auto-generated method stub
+		return this.libelleAllergene;
+	}
+	
+	@Override
+	public String getClassEntite() {
+		// TODO Auto-generated method stub
+		return this.getClass().getName();
 	}
 	
 	

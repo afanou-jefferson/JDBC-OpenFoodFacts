@@ -8,5 +8,8 @@ package datas;
 public interface Entite {
 	
 	public abstract String getEntite();
+	
+	public abstract String getClassEntite();
+	
 
 }

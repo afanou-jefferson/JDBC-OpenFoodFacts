@@ -26,6 +26,11 @@ public class Marque implements Entite{
 		return this.nomMarque;
 	}
 	
+	@Override
+	public String getClassEntite() {
+		// TODO Auto-generated method stub
+		return this.getClass().getName();
+	}
 	
 
 }

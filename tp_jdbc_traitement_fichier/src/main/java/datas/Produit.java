@@ -10,13 +10,13 @@ public class Produit {
 	private ArrayList<Marque> marques;
 	private String NomProduit;
 	private String gradeNutri;
-	private donneesNutritionnelles donneesNutri;
+	private DonneesNutritionnelles donneesNutri;
 	private ArrayList<Ingredient> listIngredients;
 	private ArrayList<Allergene> listAllergenes;
 	private ArrayList<Additif> listAdditifs;
 	
 	public Produit(Categorie categorie, ArrayList<Marque> listMarques, String nomProduit, String gradeNutri,
-			donneesNutritionnelles donneesNutri, ArrayList<Ingredient> listIngredients,
+			DonneesNutritionnelles donneesNutri, ArrayList<Ingredient> listIngredients,
 			ArrayList<Allergene> listAllergenes, ArrayList<Additif> listAdditifs) {
 		super();
 		this.categorie = categorie;
@@ -68,11 +68,11 @@ public class Produit {
 		this.gradeNutri = gradeNutri;
 	}
 
-	public donneesNutritionnelles getDonneesNutri() {
+	public DonneesNutritionnelles getDonneesNutri() {
 		return donneesNutri;
 	}
 
-	public void setDonneesNutri(donneesNutritionnelles donneesNutri) {
+	public void setDonneesNutri(DonneesNutritionnelles donneesNutri) {
 		this.donneesNutri = donneesNutri;
 	}
 
