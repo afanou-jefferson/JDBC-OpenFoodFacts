@@ -1,5 +1,7 @@
 package jdbc;
 
+import java.sql.Connection;
+
 import datas.Categorie;
 
 public interface ICategorieDao {

@@ -12,6 +12,12 @@ import exceptions.TraitementFichierException;
 import utils.ConnectionBDD;
 
 public class JDBCdaoAllergene implements IAllergeneDao {
+	
+	public Connection connection;
+	
+	public JDBCdaoAllergene(Connection connection) {
+		this.connection = connection;
+	}
 
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoAllergene.class.getName());
 
@@ -22,12 +28,12 @@ public class JDBCdaoAllergene implements IAllergeneDao {
 	 **/
 	public int insert(Allergene allergene) {
 		// TODO Auto-generated method stub
-		Connection connection = null;
+		//Connection connection = null;
 		int idAllergene = 0;
 
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			// Si la catégorie n'est pas déjà enregistrée en BDD, on l'insert
 			if (!AllergeneDejaExistante(allergene.getLibelleAllergene())) {
@@ -46,7 +52,7 @@ public class JDBCdaoAllergene implements IAllergeneDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return idAllergene;
 	}
@@ -61,10 +67,10 @@ public class JDBCdaoAllergene implements IAllergeneDao {
 
 		Allergene selectedCat = null;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertAllergene = connection
 					.prepareStatement("SELECT * FROM `allergene` WHERE nom_allergene= ?");
@@ -81,7 +87,7 @@ public class JDBCdaoAllergene implements IAllergeneDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
@@ -90,10 +96,10 @@ public class JDBCdaoAllergene implements IAllergeneDao {
 	public Allergene selectAllergene(int idAllergene) {
 		Allergene selectedCat = null;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertAllergene = connection
 					.prepareStatement("SELECT * FROM `allergene` WHERE id_allergene= ?");
@@ -110,7 +116,7 @@ public class JDBCdaoAllergene implements IAllergeneDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
@@ -127,10 +133,10 @@ public class JDBCdaoAllergene implements IAllergeneDao {
 
 		int idCat = 0;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertAllergene = connection
 					.prepareStatement("SELECT * FROM `allergene` WHERE nom_allergene= ?");
@@ -146,7 +152,7 @@ public class JDBCdaoAllergene implements IAllergeneDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 
 		return idCat;

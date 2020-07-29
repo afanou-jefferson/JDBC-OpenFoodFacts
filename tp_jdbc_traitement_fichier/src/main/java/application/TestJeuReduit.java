@@ -29,7 +29,7 @@ public class TestJeuReduit {
 	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
 
 		
-		Connection myConnection = ConnectionBDD.getConnection();
+		Connection connectionDB = ConnectionBDD.getConnection();
 		
 		File fichier = new File(System.getProperty("user.dir") + "/src/main/resources/jeuTest.csv");
 		System.out.println(fichier.canRead());
@@ -37,16 +37,17 @@ public class TestJeuReduit {
 		Chrono chrono = new Chrono();
 		chrono.start(); // démarrage du chrono
 		
-		JDBCdaoProduit daoProduit = new JDBCdaoProduit();
+		JDBCdaoProduit daoProduit = new JDBCdaoProduit(connectionDB);
 		Datas myDB = new Datas(fichier);
 		for ( Produit produit: myDB.getListeProduit()) {
 			daoProduit.insert(produit);
 		}
 		
+		chrono.stop(); // arrêt
 		System.out.println(chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
 		
 		try {
-			myConnection.close();
+			connectionDB.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

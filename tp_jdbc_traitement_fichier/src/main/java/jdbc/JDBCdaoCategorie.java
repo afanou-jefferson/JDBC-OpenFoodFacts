@@ -13,21 +13,31 @@ import utils.ConnectionBDD;
 
 public class JDBCdaoCategorie implements ICategorieDao {
 
+	public Connection connection;
+
+	public JDBCdaoCategorie(Connection connection) {
+		this.connection = connection;
+	}
+
+
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoCategorie.class.getName());
 
 	/**
-	 * Insert la catégorie placée en paramètre si elle n'est pas déjà enregistrée dans la BDD
-	 *@param Objet Categorie
-	 *@return l'ID de la catégorie inserrée si effecutée correctement,sinon retourne un int >= 1 correspondant à l'id_Cat dans la BDD 
+	 * Insert la catégorie placée en paramètre si elle n'est pas déjà enregistrée
+	 * dans la BDD
+	 * 
+	 * @param Objet Categorie
+	 * @return l'ID de la catégorie inserrée si effecutée correctement,sinon
+	 *         retourne un int >= 1 correspondant à l'id_Cat dans la BDD
 	 **/
 	public int insert(Categorie categorie) {
 		// TODO Auto-generated method stub
-		Connection connection = null;
-		int idCat = 0;
+		// Connection connection = null;
+		int idCategorie = 0;
 
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			// connection = ConnectionBDD.getConnection();
+			// ConnectionBDD.testConnection(connection, LOGGER);
 
 			// Si la catégorie n'est pas déjà enregistrée en BDD, on l'insert
 			if (!CategorieDejaExistante(categorie.getLibelleCategorie())) {
@@ -35,20 +45,20 @@ public class JDBCdaoCategorie implements ICategorieDao {
 						.prepareStatement("INSERT INTO `categorie`(`nom_Categorie`) VALUES (?)");
 				insertCategorie.setString(1, categorie.getLibelleCategorie());
 				insertCategorie.execute();
-			} 
-			
+			}
+
 			// on retourne l'ID de la categorie existante ou que l'on vient de crée
-			idCat = getId_Categorie(categorie.getLibelleCategorie());
-			
+			idCategorie = getId_Categorie(categorie.getLibelleCategorie());
+
 		} catch (SQLException e) {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			// ConnectionBDD.closeConnection(connection, LOGGER);
 		}
-		return idCat;
+		return idCategorie;
 	}
 
 	/**
@@ -61,10 +71,10 @@ public class JDBCdaoCategorie implements ICategorieDao {
 
 		Categorie selectedCat = null;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertCategorie = connection
 					.prepareStatement("SELECT * FROM `categorie` WHERE nom_categorie= ?");
@@ -81,19 +91,19 @@ public class JDBCdaoCategorie implements ICategorieDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
 	}
-	
+
 	public Categorie selectCategorie(int idCategorie) {
 		Categorie selectedCat = null;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertCategorie = connection
 					.prepareStatement("SELECT * FROM `categorie` WHERE id_categorie= ?");
@@ -110,7 +120,7 @@ public class JDBCdaoCategorie implements ICategorieDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
@@ -127,10 +137,10 @@ public class JDBCdaoCategorie implements ICategorieDao {
 
 		int idCat = 0;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertCategorie = connection
 					.prepareStatement("SELECT * FROM `categorie` WHERE nom_categorie= ?");
@@ -146,15 +156,15 @@ public class JDBCdaoCategorie implements ICategorieDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 
 		return idCat;
 	}
-	
-	public boolean CategorieDejaExistante (String nomCat) {
+
+	public boolean CategorieDejaExistante(String nomCat) {
 		boolean bool = false;
-		if ( getId_Categorie(nomCat)!= 0) {
+		if (getId_Categorie(nomCat) != 0) {
 			bool = true;
 		}
 		return bool;

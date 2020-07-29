@@ -11,6 +11,12 @@ import exceptions.TraitementFichierException;
 import utils.ConnectionBDD;
 
 public class JDBCdaoAdditif implements IAdditifDao {
+	
+	public Connection connection;
+	
+	public JDBCdaoAdditif(Connection connection) {
+		this.connection = connection;
+	}
 
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoProduit.class.getName());
 
@@ -24,16 +30,16 @@ public class JDBCdaoAdditif implements IAdditifDao {
 	 **/
 	public int insert(Additif additif) {
 		// TODO Auto-generated method stub
-		Connection connection = null;
+		//Connection connection = null;
 		int idAdditif = 0;
 
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			// Si la additif n'est pas déjà enregistrée en BDD, on l'insert
 			if (!AdditifDejaExistant(additif.getLibelleAdditif())) {
-				PreparedStatement insertProduit = connection
+				PreparedStatement insertProduit = this.connection
 						.prepareStatement("INSERT INTO `additif`(`nom_Additif`) VALUES (?)");
 				insertProduit.setString(1, additif.getLibelleAdditif());
 				insertProduit.execute();
@@ -48,7 +54,7 @@ public class JDBCdaoAdditif implements IAdditifDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return idAdditif;
 	}
@@ -63,12 +69,12 @@ public class JDBCdaoAdditif implements IAdditifDao {
 
 		Additif selectedCat = null;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
-			PreparedStatement insertProduit = connection
+			PreparedStatement insertProduit = this.connection
 					.prepareStatement("SELECT * FROM `additif` WHERE nom_additif= ?");
 			insertProduit.setString(1, nomAdditif);
 			ResultSet result = insertProduit.executeQuery();
@@ -83,7 +89,7 @@ public class JDBCdaoAdditif implements IAdditifDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
@@ -92,12 +98,12 @@ public class JDBCdaoAdditif implements IAdditifDao {
 	public Additif selectAdditif(int idAdditif) {
 		Additif selectedCat = null;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
-			PreparedStatement insertProduit = connection
+			PreparedStatement insertProduit = this.connection
 					.prepareStatement("SELECT * FROM `additif` WHERE id_additif= ?");
 			insertProduit.setInt(1, idAdditif);
 			ResultSet result = insertProduit.executeQuery();
@@ -112,7 +118,7 @@ public class JDBCdaoAdditif implements IAdditifDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
@@ -129,12 +135,12 @@ public class JDBCdaoAdditif implements IAdditifDao {
 
 		int idCat = 0;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
-			PreparedStatement insertProduit = connection
+			PreparedStatement insertProduit = this.connection
 					.prepareStatement("SELECT * FROM `additif` WHERE nom_additif= ?");
 			insertProduit.setString(1, nomAdditif);
 			ResultSet result = insertProduit.executeQuery();
@@ -148,7 +154,7 @@ public class JDBCdaoAdditif implements IAdditifDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 
 		return idCat;

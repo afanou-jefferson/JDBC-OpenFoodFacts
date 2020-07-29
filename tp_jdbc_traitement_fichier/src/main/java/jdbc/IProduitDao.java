@@ -1,5 +1,6 @@
 package jdbc;
 
+import java.sql.Connection;
 import java.util.List;
 
 import datas.Produit;

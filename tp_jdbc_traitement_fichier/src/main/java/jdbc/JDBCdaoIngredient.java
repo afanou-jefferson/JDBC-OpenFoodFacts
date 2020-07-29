@@ -11,22 +11,31 @@ import exceptions.TraitementFichierException;
 import utils.ConnectionBDD;
 
 public class JDBCdaoIngredient implements IIngredientDao {
-	
+
+	public Connection connection;
+
+	public JDBCdaoIngredient(Connection connection) {
+		this.connection = connection;
+	}
+
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoIngredient.class.getName());
 
 	/**
-	 * Insert la ingredient placée en paramètre si elle n'est pas déjà enregistrée dans la BDD
-	 *@param Objet Ingredient
-	 *@return l'ID de la ingredient inserrée si effecutée correctement,sinon retourne un int >= 1 correspondant à l'id_Cat dans la BDD 
+	 * Insert la ingredient placée en paramètre si elle n'est pas déjà enregistrée
+	 * dans la BDD
+	 * 
+	 * @param Objet Ingredient
+	 * @return l'ID de la ingredient inserrée si effecutée correctement,sinon
+	 *         retourne un int >= 1 correspondant à l'id_Cat dans la BDD
 	 **/
 	public int insert(Ingredient ingredient) {
 		// TODO Auto-generated method stub
-		Connection connection = null;
+		// Connection connection = null;
 		int idCat = 0;
 
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			// connection = ConnectionBDD.getConnection();
+			// ConnectionBDD.testConnection(connection, LOGGER);
 
 			// Si la ingredient n'est pas déjà enregistrée en BDD, on l'insert
 			if (!IngredientDejaExistante(ingredient.getLibelleIngredient())) {
@@ -34,18 +43,18 @@ public class JDBCdaoIngredient implements IIngredientDao {
 						.prepareStatement("INSERT INTO `ingredient`(`nom_Ingredient`) VALUES (?)");
 				insertIngredient.setString(1, ingredient.getLibelleIngredient());
 				insertIngredient.execute();
-			} 
-			
+			}
+
 			// on retourne l'ID de la ingredient existante ou que l'on vient de crée
 			idCat = getId_Ingredient(ingredient.getLibelleIngredient());
-			
+
 		} catch (SQLException e) {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			// ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return idCat;
 	}
@@ -60,10 +69,10 @@ public class JDBCdaoIngredient implements IIngredientDao {
 
 		Ingredient selectedCat = null;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertIngredient = connection
 					.prepareStatement("SELECT * FROM `ingredient` WHERE nom_ingredient= ?");
@@ -80,19 +89,19 @@ public class JDBCdaoIngredient implements IIngredientDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
 	}
-	
+
 	public Ingredient selectIngredient(int idIngredient) {
 		Ingredient selectedCat = null;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertIngredient = connection
 					.prepareStatement("SELECT * FROM `ingredient` WHERE id_ingredient= ?");
@@ -109,7 +118,7 @@ public class JDBCdaoIngredient implements IIngredientDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
@@ -126,10 +135,10 @@ public class JDBCdaoIngredient implements IIngredientDao {
 
 		int idCat = 0;
 
-		Connection connection = null;
+		//Connection connection = null;
 		try {
-			connection = ConnectionBDD.getConnection();
-			ConnectionBDD.testConnection(connection, LOGGER);
+			//connection = ConnectionBDD.getConnection();
+			//ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertIngredient = connection
 					.prepareStatement("SELECT * FROM `ingredient` WHERE nom_ingredient= ?");
@@ -145,19 +154,17 @@ public class JDBCdaoIngredient implements IIngredientDao {
 		}
 
 		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
+			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 
 		return idCat;
 	}
-	
-	public boolean IngredientDejaExistante (String nomCat) {
+
+	public boolean IngredientDejaExistante(String nomCat) {
 		boolean bool = false;
-		if ( getId_Ingredient(nomCat)!= 0) {
+		if (getId_Ingredient(nomCat) != 0) {
 			bool = true;
 		}
 		return bool;
 	}
 }
-
-

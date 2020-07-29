@@ -48,7 +48,7 @@ public class ApplicationOpenFoodFacts {
 		//daoA.insert(myDB.getListeAdditif().get(0));
 		
 		
-		Additif add = new Additif("ex additif");
+		/*Additif add = new Additif("ex additif");
 		ArrayList<Additif> listAdditif = new ArrayList<Additif>();
 		listAdditif.add(add);
 		
@@ -87,7 +87,7 @@ public class ApplicationOpenFoodFacts {
 		
 		JDBCdaoProduit daoP = new JDBCdaoProduit();
 		System.out.println(prod);
-		daoP.insert(prod); // Test Produit
+		daoP.insert(prod); // Test Produit */
 		
 	}
 }
