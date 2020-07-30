@@ -30,7 +30,7 @@ public class JDBCdaoGenerique {
 	}
 
 	/**
-	 * Insert l'InfoProduit placée en paramètre si elle n'est pas déjà enregistrée
+	 * Insert l'Objet héritant d'InfoProduit placée en paramètre si elle n'est pas déjà enregistrée
 	 * dans la BDD
 	 * 
 	 * @param InfoProduit
@@ -38,27 +38,23 @@ public class JDBCdaoGenerique {
 	 *         si doublon
 	 **/
 	public int insert(InfoProduit model) {
-		// TODO Auto-generated method stub
 
 		int idRow = 0;
-
-		// System.out.println("Taille nb Attributs : " + model.getNbAttributsModel() );
-
 		try {
-
 			int matchID = getIDFromNom(model.getValeurIdentifiant(), model);
 
-			if (matchID == -1) { // Si différent alors on a un enregistrement exactement pareil
+			if (matchID != -1) { // Si différent alors on a un enregistrement exactement pareil
 				idRow = matchID;
 			} else {
 				int alikeID = selectIDRowLike(model);
 				if (alikeID != -1) { // Si différent de -1 alors on a un enregistrement similaire
 					idRow = alikeID;
 				} else { // Sinon insert classique
-
 					StringBuilder builtString = new StringBuilder();
-					builtString.append("INSERT INTO ").append(model.getNomModel())
-							.append(" " + attributsToFormatSQL(model) + " ").append(" VALUES ")
+					builtString.append("INSERT INTO ")
+							.append(model.getNomModel())
+							.append(" " + attributsToFormatSQL(model) + " ")
+							.append(" VALUES ")
 							.append(nbAttributsToFormatSQL(model));
 
 					PreparedStatement insert = connection.prepareStatement(builtString.toString(),
@@ -66,8 +62,6 @@ public class JDBCdaoGenerique {
 
 					for (int i = 1; i <= model.getNbAttributsModel(); i++) {
 						insert.setString(i, model.getValeurAttributsModel().get(i - 1));
-						// System.out.println("Test controller.insert() : " +
-						// model.getValeurAttributsModel().get(i - 1) );
 					}
 
 					insert.execute();
@@ -81,15 +75,13 @@ public class JDBCdaoGenerique {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
-
 		return idRow;
 	}
 
 	public CustomRow selectRowLike(InfoProduit model) {
-		//String nomDansBDD = "NON ENREGISTRE";
-		
+
 		CustomRow infosRow = new CustomRow();
-		
+
 		try {
 			StringBuilder builtString = new StringBuilder();
 			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
@@ -103,7 +95,7 @@ public class JDBCdaoGenerique {
 			}
 
 		} catch (SQLException e) {
-			// transformer SQLException en ComptaException
+
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
 		return infosRow;
@@ -115,17 +107,18 @@ public class JDBCdaoGenerique {
 
 		try {
 			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
-					.append(model.getNomModel()).append(" = ?");
+			builtString.append("SELECT * FROM ")
+						.append(model.getNomModel())
+						.append(" WHERE nom_")
+						.append(model.getNomModel())
+						.append(" = ?");
 			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
 			selectWhereString.setString(1, model.getValeurIdentifiant());
 			ResultSet result = selectWhereString.executeQuery();
 			if (result.next()) {
 				idRowAlike = result.getInt(1);
 			}
-
 		} catch (SQLException e) {
-			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
 		return idRowAlike;
@@ -160,8 +153,11 @@ public class JDBCdaoGenerique {
 
 		try {
 			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE id_")
-					.append(model.getNomModel()).append(" = ?");
+			builtString.append("SELECT * FROM ")
+						.append(model.getNomModel())
+						.append(" WHERE id_")
+						.append(model.getNomModel())
+						.append(" = ?");
 			PreparedStatement insertRow = connection.prepareStatement(builtString.toString());
 			insertRow.setInt(1, idACherche);
 			ResultSet result = insertRow.executeQuery();
@@ -173,9 +169,7 @@ public class JDBCdaoGenerique {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
-
 		return nomRow;
-
 	}
 
 	/**
@@ -187,11 +181,13 @@ public class JDBCdaoGenerique {
 	public int getIDFromNom(String nomAChercher, InfoProduit model) {
 
 		int idRow = -1;
-
 		try {
 			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
-					.append(model.getNomModel()).append(" = ?");
+			builtString.append("SELECT * FROM ")
+						.append(model.getNomModel())
+						.append(" WHERE nom_")
+						.append(model.getNomModel())
+						.append(" = ?");
 			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
 			selectWhereString.setString(1, model.getValeurIdentifiant());
 			ResultSet result = selectWhereString.executeQuery();

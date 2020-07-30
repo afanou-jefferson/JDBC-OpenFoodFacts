@@ -3,23 +3,16 @@ package application;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.logging.Logger;
 
-import datas.Additif;
-import datas.Allergene;
-import datas.Categorie;
 import datas.Datas;
-import datas.DonneesNutritionnelles;
-import datas.Ingredient;
-import datas.Marque;
-import datas.Produit;
 import jdbc.JDBCdaoProduit;
 import utils.Chrono;
 import utils.ConnectionBDD;
 
 public class ApplicationOpenFoodFacts {
+	
+	private static final Logger LOGGER = Logger.getLogger(ApplicationOpenFoodFacts.class.getName());
 
 	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
 
@@ -39,8 +32,11 @@ public class ApplicationOpenFoodFacts {
 		try {
 			connectionDB.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		finally {
+			ConnectionBDD.closeConnection(connectionDB, LOGGER);
 		}
 	}
 }

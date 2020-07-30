@@ -27,47 +27,20 @@ public class JDBCdaoProduit {
 		this.connection = connection;
 	}
 
-	private static final Logger LOGGER = Logger.getLogger(JDBCdaoProduit.class.getName());
-
-	public int insert(String nomProduit, String gradeNutri,int idCategorie) {
-		
-		try {
-		int idNewProduit = 0;
-		
-		if (!produitDejaExistant(nomProduit)) {
-			PreparedStatement insertProduit = connection.prepareStatement(
-					"INSERT INTO `produit`(`nom_Produit`, `grade_Nutri_Produit`, `id_Categorie`) VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS);
-			insertProduit.setString(1, nomProduit);
-			insertProduit.setString(2, gradeNutri);
-			insertProduit.setInt(3, idCategorie);
-			insertProduit.execute();
-			ResultSet result = insertProduit.getGeneratedKeys();
-			if (result.next()) {
-				idNewProduit = result.getInt(1); 
-				System.out.println("Test OK");
-			}
-		}	
-		return idNewProduit;
-		} catch (SQLException e) {
-			// transformer SQLException en ComptaException
-			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
-		}
-
-	}
-	
 	public void insert(Produit produit) {
 		// TODO Auto-generated method stub
 		// Connection connection = null;
-		
+
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(connection);
 		JDBCdaoProduit daoProduit = new JDBCdaoProduit(connection);
-		
+
 		try {
-	
+
 			// On check déjà que la catégorie est présente pour respecter la contrainte de
 			// clé étrangère
 
-			int idCategorie = daoGenerique.getIDFromNom(produit.getCategorie().getNomCategorie(), produit.getCategorie());
+			int idCategorie = daoGenerique.getIDFromNom(produit.getCategorie().getNomCategorie(),
+					produit.getCategorie());
 
 			if (!produitDejaExistant(produit.getNomProduit())) {
 				PreparedStatement insertProduit = connection.prepareStatement(
@@ -88,7 +61,6 @@ public class JDBCdaoProduit {
 				insertJointure.execute();
 			}
 
-				
 			for (Integer idIngredient : produit.getListIDsIngredients()) {
 				PreparedStatement insertJointure = connection.prepareStatement(
 						"INSERT INTO `jointure_prod_ingredient`(`id_produit`, `id_Ingredient`) VALUES (?,?)");
@@ -130,11 +102,8 @@ public class JDBCdaoProduit {
 
 		int idCat = 0;
 
-		//Connection connection = null;
+		// Connection connection = null;
 		try {
-			//connection = ConnectionBDD.getConnection();
-			//ConnectionBDD.testConnection(connection, LOGGER);
-
 			PreparedStatement insertProduit = this.connection
 					.prepareStatement("SELECT * FROM `Produit` WHERE nom_Produit= ?");
 			insertProduit.setString(1, nomProduit);
@@ -142,14 +111,9 @@ public class JDBCdaoProduit {
 			if (result.next()) {
 				idCat = result.getInt(1);
 			}
-
 		} catch (SQLException e) {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
-		}
-
-		finally {
-			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return idCat;
 	}

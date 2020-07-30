@@ -16,13 +16,11 @@ import jdbc.JDBCdaoProduit;
 public class Datas {
 
 	Connection connection;
-
 	ArrayList<Integer> listIDsAdditifs = new ArrayList<Integer>();
 	ArrayList<Integer> listIDsIngredients = new ArrayList<Integer>();
 	ArrayList<Integer> listIDsMarques = new ArrayList<Integer>();
 	ArrayList<Integer> listIDsAllergenes = new ArrayList<Integer>();
 	int idCategorieProduit;
-	// ArrayList<Produit> listeProduits = new ArrayList<Produit>();
 
 	public Datas(File fichier, Connection connection) throws IllegalArgumentException, IllegalAccessException {
 
@@ -35,13 +33,14 @@ public class Datas {
 			File file = fichier;
 			List<String> lignes = FileUtils.readLines(file, "UTF-8");
 
-			for (int i = 1; i < lignes.size(); i++) { // Start 1 pour sauter ligne intitules categories
+			// Start 1 pour sauter ligne intitules categories
+			for (int i = 1; i < lignes.size(); i++) {
 				String[] morceaux = lignes.get(i).split("\\|", -1);
 
-				int idCategorie = traitementCategorie(morceaux[0]);
-				this.listIDsMarques = traitementMarque(morceaux[1]);
 				String nomProduit = morceaux[2];
 				String gradeNutriProduit = morceaux[3];
+				int idCategorie = traitementCategorie(morceaux[0]);
+				this.listIDsMarques = traitementMarque(morceaux[1]);
 				this.listIDsIngredients = traitementIngredients(morceaux[4]);
 				this.listIDsAllergenes = traitementAllergenes(morceaux[28]);
 				this.listIDsAdditifs = traitementAdditifs(morceaux[29]);
@@ -65,7 +64,6 @@ public class Datas {
 				daoProduit.insert(newProduit);
 
 				System.out.println(i);
-
 			}
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -80,8 +78,9 @@ public class Datas {
 
 		for (String nomAdditif : elemStringAdditif) {
 
+			//Nettoyage spécial 
 			String cleanAdditif = nomAdditif.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
-					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").trim();
+					.replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").trim();
 
 			Additif additifEnLecture = new Additif("");
 
@@ -105,8 +104,7 @@ public class Datas {
 
 		for (String nomAllergene : elemStringAllergene) {
 
-			String cleanAllergene = nomAllergene.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
-					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").trim();
+			String cleanAllergene = nettoyerString(nomAllergene);
 
 			Allergene allergeneEnLecture = new Allergene("");
 
@@ -127,8 +125,7 @@ public class Datas {
 
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connection);
 
-		String cleanCategorie = morceauString.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
-				.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").trim();
+		String cleanCategorie = nettoyerString(morceauString);
 
 		Categorie categorieEnLecture = new Categorie("");
 
@@ -137,9 +134,8 @@ public class Datas {
 		} else {
 			categorieEnLecture = new Categorie(cleanCategorie);
 		}
-
 		int idCategorieBDD = daoGenerique.insert(categorieEnLecture);
-
+		
 		return idCategorieBDD;
 	}
 
@@ -179,8 +175,7 @@ public class Datas {
 
 		for (String nomIngredient : elemStringIngredient) {
 
-			String cleanIngredient = nomIngredient.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
-					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").trim();
+			String cleanIngredient = nettoyerString(nomIngredient);
 
 			Ingredient ingredientEnLecture = new Ingredient("");
 
@@ -192,7 +187,7 @@ public class Datas {
 
 			String nomIngredientFromBDD = daoGenerique.selectRowLike(ingredientEnLecture).getNom_Row();
 
-			int bn, idIngredientBDD = daoGenerique.insert(new Ingredient(nomIngredientFromBDD));
+			int idIngredientBDD = daoGenerique.insert(new Ingredient(nomIngredientFromBDD));
 
 			listIDIngredientsProduit.add(idIngredientBDD);
 		}
@@ -208,4 +203,9 @@ public class Datas {
 		}
 	}
 
+	public String nettoyerString(String rawString ) {
+		String cleanString = rawString.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
+				.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").trim();
+		return cleanString;
+	}
 }

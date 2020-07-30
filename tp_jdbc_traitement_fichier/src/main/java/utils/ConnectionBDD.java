@@ -48,7 +48,7 @@ public class ConnectionBDD {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			LOGGER.log(Level.INFO, "Requête effectuée, déconnexion de la BDD");
+			LOGGER.log(Level.INFO, "Déconnexion de la BDD");
 		}
 	}
 
