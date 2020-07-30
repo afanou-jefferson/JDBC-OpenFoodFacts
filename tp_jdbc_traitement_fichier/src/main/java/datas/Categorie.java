@@ -4,36 +4,38 @@ import java.util.ArrayList;
 
 public class Categorie extends InfoProduit{ 
 	
-	private String nomCategorie;
+	public String nom_Categorie;
 
 	public Categorie(String nomCategorie) {
 		super();
-		this.nomCategorie = nomCategorie;
+		this.nom_Categorie = nomCategorie;
+	}
+	
+	public Categorie(){};
+
+	public String getNomCategorie() {
+		return nom_Categorie;
 	}
 
-	public String getLibelleCategorie() {
-		return nomCategorie;
-	}
-
-	public void setLibelleCategorie(String nomCategorie) {
-		this.nomCategorie = nomCategorie;
+	public void setNomCategorie(String nomCategorie) {
+		this.nom_Categorie = nomCategorie;
 	}
 
 	@Override
 	public String toString() {
-		return "Categorie [nomCategorie=" + nomCategorie + "]";
+		return "Categorie [nomCategorie=" + nom_Categorie + "]";
 	}
 
 	@Override
 	public String getValeurIdentifiant() {
 		// TODO Auto-generated method stub
-		return this.nomCategorie;
+		return this.nom_Categorie;
 	}
 	@Override
 	public ArrayList<String> getValeurAttributsModel() {
 		ArrayList<String> listeValeurs = new ArrayList<String>();
 		
-		listeValeurs.add(this.nomCategorie);
+		listeValeurs.add(this.nom_Categorie);
 		
 		return listeValeurs;
 	}

@@ -16,10 +16,10 @@ import datas.DonneesNutritionnelles;
 import datas.Ingredient;
 import datas.Marque;
 import datas.Produit;
-import jdbc.JDBCdaoAdditif;
-import jdbc.JDBCdaoCategorie;
-import jdbc.JDBCdaoIngredient;
-import jdbc.JDBCdaoMarque;
+//import jdbc.JDBCdaoAdditif;
+//import jdbc.JDBCdaoCategorie;
+//import jdbc.JDBCdaoIngredient;
+//import jdbc.JDBCdaoMarque;
 import jdbc.JDBCdaoProduit;
 import utils.Chrono;
 import utils.ConnectionBDD;
@@ -39,10 +39,8 @@ public class TestJeuReduit {
 		
 		JDBCdaoProduit daoProduit = new JDBCdaoProduit(connectionDB);
 		Datas myDB = new Datas(fichier, connectionDB);
-		for ( Produit produit: myDB.getListeProduit()) {
-			daoProduit.insert(produit);
-		}
 		
+		 
 		chrono.stop(); // arrêt
 		System.out.println(chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
 		

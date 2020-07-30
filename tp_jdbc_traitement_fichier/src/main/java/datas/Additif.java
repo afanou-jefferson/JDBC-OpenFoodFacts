@@ -4,38 +4,38 @@ import java.util.ArrayList;
 
 public class Additif extends InfoProduit{
 	
-	public String nomAdditif;
+	public String nom_Additif;
 
 	public Additif(String nomAdditif) {
 		super();
-		this.nomAdditif = nomAdditif;
+		this.nom_Additif = nomAdditif;
 	}
 
 	public String getLibelleAdditif() {
-		return nomAdditif;
+		return nom_Additif;
 	}
 
 	public void setLibelleAdditif(String nomAdditif) {
-		this.nomAdditif = nomAdditif;
+		this.nom_Additif = nomAdditif;
 	}
 
 	@Override
 	public String toString() {
-		return "Additif [nomAdditif=" + nomAdditif + "]";
+		return "Additif [nomAdditif=" + nom_Additif + "]";
 	}
 
 
 	@Override
 	public String getValeurIdentifiant() {
 		// TODO Auto-generated method stub
-		return this.nomAdditif;
+		return this.nom_Additif;
 	}
 	
 	@Override
 	public ArrayList<String> getValeurAttributsModel() {
 		ArrayList<String> listeValeurs = new ArrayList<String>();
 		
-		listeValeurs.add(this.nomAdditif);
+		listeValeurs.add(this.nom_Additif);
 		
 		return listeValeurs;
 	}

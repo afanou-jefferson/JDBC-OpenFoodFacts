@@ -19,7 +19,7 @@ import datas.Produit;
 import exceptions.TraitementFichierException;
 import utils.ConnectionBDD;
 
-public class JDBCdaoProduit implements IProduitDao {
+public class JDBCdaoProduit {
 
 	public Connection connection;
 
@@ -29,7 +29,7 @@ public class JDBCdaoProduit implements IProduitDao {
 
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoProduit.class.getName());
 
-	public int insert(String nomProduit, String gradeNutri,int idCategorie ) {
+	public int insert(String nomProduit, String gradeNutri,int idCategorie) {
 		
 		try {
 		int idNewProduit = 0;
@@ -55,33 +55,32 @@ public class JDBCdaoProduit implements IProduitDao {
 
 	}
 	
-	@Override
 	public void insert(Produit produit) {
 		// TODO Auto-generated method stub
 		// Connection connection = null;
-
+		
+		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(connection);
+		JDBCdaoProduit daoProduit = new JDBCdaoProduit(connection);
+		
 		try {
 	
 			// On check déjà que la catégorie est présente pour respecter la contrainte de
 			// clé étrangère
-			JDBCdaoCategorie daoCategorie = new JDBCdaoCategorie(connection);
-			int idCat = daoCategorie.insert(produit.getCategorie());
+
+			int idCategorie = daoGenerique.getIDFromNom(produit.getCategorie().getNomCategorie(), produit.getCategorie());
 
 			if (!produitDejaExistant(produit.getNomProduit())) {
 				PreparedStatement insertProduit = connection.prepareStatement(
 						"INSERT INTO `produit`(`nom_Produit`, `grade_Nutri_Produit`, `id_Categorie`) VALUES (?,?,?)");
 				insertProduit.setString(1, produit.getNomProduit());
 				insertProduit.setString(2, produit.getGradeNutri());
-				insertProduit.setInt(3, idCat);
+				insertProduit.setInt(3, idCategorie);
 				insertProduit.execute();
 			}
 
 			int idProduit = getId_Produit(produit.getNomProduit());
 
-			// Si non présente, on insert les caractéristiques de l'objet placé en param
-			JDBCdaoMarque daoMarque = new JDBCdaoMarque(connection);
-			for (Marque marque : produit.getMarques()) {
-				int idMarque = daoMarque.insert(marque);
+			for (Integer idMarque : produit.getListIDsMarques()) {
 				PreparedStatement insertJointure = connection
 						.prepareStatement("INSERT INTO `jointure_prod_marque`(`id_produit`, `id_Marque`) VALUES (?,?)");
 				insertJointure.setInt(1, idProduit);
@@ -89,9 +88,8 @@ public class JDBCdaoProduit implements IProduitDao {
 				insertJointure.execute();
 			}
 
-			JDBCdaoIngredient daoIngredient = new JDBCdaoIngredient(connection);
-			for (Ingredient ingredient : produit.getListIngredients()) {
-				int idIngredient = daoIngredient.insert(ingredient);
+				
+			for (Integer idIngredient : produit.getListIDsIngredients()) {
 				PreparedStatement insertJointure = connection.prepareStatement(
 						"INSERT INTO `jointure_prod_ingredient`(`id_produit`, `id_Ingredient`) VALUES (?,?)");
 				insertJointure.setInt(1, idProduit);
@@ -100,9 +98,7 @@ public class JDBCdaoProduit implements IProduitDao {
 
 			}
 
-			JDBCdaoAllergene daoAllergene = new JDBCdaoAllergene(connection);
-			for (Allergene allergene : produit.getListAllergenes()) {
-				int idAllergene = daoAllergene.insert(allergene);
+			for (Integer idAllergene : produit.getListIDsAllergenes()) {
 				PreparedStatement insertJointure = connection.prepareStatement(
 						"INSERT INTO `jointure_prod_allergene`(`id_produit`, `id_Allergene`) VALUES (?,?)");
 				insertJointure.setInt(1, idProduit);
@@ -110,9 +106,7 @@ public class JDBCdaoProduit implements IProduitDao {
 				insertJointure.execute();
 			}
 
-			JDBCdaoAdditif daoAdditif = new JDBCdaoAdditif(connection);
-			for (Additif add : produit.getListAdditifs()) {
-				int idAdditif = daoAdditif.insert(add);
+			for (Integer idAdditif : produit.getListIDsAdditifs()) {
 				PreparedStatement insertJointure = connection.prepareStatement(
 						"INSERT INTO `jointure_prod_additif`(`id_produit`, `id_Additif`) VALUES (?,?)");
 				insertJointure.setInt(1, idProduit);
@@ -124,44 +118,7 @@ public class JDBCdaoProduit implements IProduitDao {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
-
-		finally {
-			// ConnectionBDD.closeConnection(connection, LOGGER);
-		}
 	}
-
-	/*
-	 * public Produit selectProduit(String nomProduit) {
-	 * 
-	 * Produit selectedProduit = null;
-	 * 
-	 * Connection connection = null; try { connection =
-	 * ConnectionBDD.getConnection(); ConnectionBDD.testConnection(connection,
-	 * LOGGER);
-	 * 
-	 * PreparedStatement insertProduit = connection
-	 * .prepareStatement("SELECT * FROM `Produit` WHERE nom_Produit= ?");
-	 * insertProduit.setString(1, nomProduit); ResultSet result =
-	 * insertProduit.executeQuery(); if (result.next()) { String BDDnomProduit =
-	 * result.getString(2); String BDDgradeNutriProduit = result.getString(3);
-	 * 
-	 * JDBCdaoCategorie daoCat = new JDBCdaoCategorie(); Categorie
-	 * BDDCategorieProduit = daoCat.selectCategorie(result.getInt(4)); // Select la
-	 * catégorie correspondant à l'id stockée dans la colone id_Cat
-	 * 
-	 * selectedProduit = new Produit(BDDnomProduit, BDDgradeNutriProduit,
-	 * BDDCategorieProduit); }
-	 * 
-	 * } catch (SQLException e) { // transformer SQLException en ComptaException
-	 * throw new
-	 * TraitementFichierException("Erreur de communication avec la base de données",
-	 * e); }
-	 * 
-	 * finally { ConnectionBDD.closeConnection(connection, LOGGER); } return
-	 * selectedCat;
-	 * 
-	 * }
-	 */
 
 	/**
 	 * Sert à obtenir l'ID de la catégorie en BDD
@@ -194,7 +151,6 @@ public class JDBCdaoProduit implements IProduitDao {
 		finally {
 			//ConnectionBDD.closeConnection(connection, LOGGER);
 		}
-
 		return idCat;
 	}
 

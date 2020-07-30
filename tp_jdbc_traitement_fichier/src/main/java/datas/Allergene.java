@@ -4,37 +4,37 @@ import java.util.ArrayList;
 
 public class Allergene extends InfoProduit{
 	
-	private String nomAllergene;
+	public String nom_Allergene;
 
 	public Allergene(String nomAllergene) {
 		super();
-		this.nomAllergene = nomAllergene;
+		this.nom_Allergene = nomAllergene;
 	}
 
 	public String getLibelleAllergene() {
-		return nomAllergene;
+		return nom_Allergene;
 	}
 
 	public void setLibelleAllergene(String nomAllergene) {
-		this.nomAllergene = nomAllergene;
+		this.nom_Allergene = nomAllergene;
 	}
 
 	@Override
 	public String toString() {
-		return "Allergene [nomAllergene=" + nomAllergene + "]";
+		return "Allergene [nomAllergene=" + nom_Allergene + "]";
 	}
 
 	@Override
 	public String getValeurIdentifiant() {
 		// TODO Auto-generated method stub
-		return this.nomAllergene;
+		return this.nom_Allergene;
 	}
 	
 	@Override
 	public ArrayList<String> getValeurAttributsModel() {
 		ArrayList<String> listeValeurs = new ArrayList<String>();
 		
-		listeValeurs.add(this.nomAllergene);
+		listeValeurs.add(this.nom_Allergene);
 		
 		return listeValeurs;
 	}

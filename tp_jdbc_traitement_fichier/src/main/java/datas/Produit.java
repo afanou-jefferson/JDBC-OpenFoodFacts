@@ -1,39 +1,31 @@
- package datas;
+package datas;
 
 import java.util.ArrayList;
 
 import utils.ArrayListToString;
 
 public class Produit {
-	
+
 	private Categorie categorie;
-	private ArrayList<Marque> marques;
+	private ArrayList<Integer> listIDsMarques;
 	private String NomProduit;
 	private String gradeNutri;
-	private DonneesNutritionnelles donneesNutri;
-	private ArrayList<Ingredient> listIngredients;
-	private ArrayList<Allergene> listAllergenes;
-	private ArrayList<Additif> listAdditifs;
-	
-	public Produit(Categorie categorie, ArrayList<Marque> listMarques, String nomProduit, String gradeNutri,
-			DonneesNutritionnelles donneesNutri, ArrayList<Ingredient> listIngredients,
-			ArrayList<Allergene> listAllergenes, ArrayList<Additif> listAdditifs) {
+	// private DonneesNutritionnelles donneesNutri;
+	private ArrayList<Integer> listIDsIngredients;
+	private ArrayList<Integer> listIDsAllergenes;
+	private ArrayList<Integer> listIDsAdditifs;
+
+	public Produit(Categorie categorie, ArrayList<Integer> listIDsMarques, String nomProduit, String gradeNutri,
+			ArrayList<Integer> listIDsIngredients, ArrayList<Integer> listIDsAllergenes,
+			ArrayList<Integer> listIDsAdditifs) {
 		super();
 		this.categorie = categorie;
-		this.marques = listMarques;
-		this.NomProduit = nomProduit;
+		this.listIDsMarques = listIDsMarques;
+		NomProduit = nomProduit;
 		this.gradeNutri = gradeNutri;
-		this.donneesNutri = donneesNutri;
-		this.listIngredients = listIngredients;
-		this.listAllergenes = listAllergenes;
-		this.listAdditifs = listAdditifs;
-	}
-
-	@Override
-	public String toString() {
-		return "Produit [categorie=" + categorie.getLibelleCategorie() + ", marque=" + marques + ", NomProduit=" + NomProduit + ", gradeNutri="
-				+ gradeNutri + ", donneesNutri=" + donneesNutri + ", listIngredients=" + ArrayListToString.getStringArrayList(this.listIngredients)
-				+ ", listAllergenes=" + ArrayListToString.getStringArrayList(this.listAllergenes) + ", listAdditifs=" + ArrayListToString.getStringArrayList(this.listAdditifs) + "]";
+		this.listIDsIngredients = listIDsIngredients;
+		this.listIDsAllergenes = listIDsAllergenes;
+		this.listIDsAdditifs = listIDsAdditifs;
 	}
 
 	public Categorie getCategorie() {
@@ -44,12 +36,16 @@ public class Produit {
 		this.categorie = categorie;
 	}
 
-	public ArrayList<Marque> getMarques() {
-		return marques;
+	public ArrayList<Integer> getListIDsIngredients() {
+		return listIDsIngredients;
 	}
 
-	public void setMarques(ArrayList<Marque> marques) {
-		this.marques = marques;
+	public ArrayList<Integer> getListIDsMarques() {
+		return listIDsMarques;
+	}
+
+	public void setListIDsMarques(ArrayList<Integer> listIDsMarques) {
+		this.listIDsMarques = listIDsMarques;
 	}
 
 	public String getNomProduit() {
@@ -68,42 +64,24 @@ public class Produit {
 		this.gradeNutri = gradeNutri;
 	}
 
-	public DonneesNutritionnelles getDonneesNutri() {
-		return donneesNutri;
+	public void setListIDsIngredients(ArrayList<Integer> listIDsIngredients) {
+		this.listIDsIngredients = listIDsIngredients;
 	}
 
-	public void setDonneesNutri(DonneesNutritionnelles donneesNutri) {
-		this.donneesNutri = donneesNutri;
+	public ArrayList<Integer> getListIDsAllergenes() {
+		return listIDsAllergenes;
 	}
 
-	public ArrayList<Ingredient> getListIngredients() {
-		return listIngredients;
+	public void setListIDsAllergenes(ArrayList<Integer> listIDsAllergenes) {
+		this.listIDsAllergenes = listIDsAllergenes;
 	}
 
-	public void setListIngredients(ArrayList<Ingredient> listIngredients) {
-		this.listIngredients = listIngredients;
+	public ArrayList<Integer> getListIDsAdditifs() {
+		return listIDsAdditifs;
 	}
 
-	public ArrayList<Allergene> getListAllergenes() {
-		return listAllergenes;
+	public void setListIDsAdditifs(ArrayList<Integer> listIDsAdditifs) {
+		this.listIDsAdditifs = listIDsAdditifs;
 	}
-
-	public void setListAllergenes(ArrayList<Allergene> listAllergenes) {
-		this.listAllergenes = listAllergenes;
-	}
-
-	public ArrayList<Additif> getListAdditifs() {
-		return listAdditifs;
-	}
-
-	public void setListAdditifs(ArrayList<Additif> listAdditifs) {
-		this.listAdditifs = listAdditifs;
-	}
-	
-	
-	
-
-	
-
 
 }

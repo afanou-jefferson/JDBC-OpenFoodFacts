@@ -13,16 +13,16 @@ import datas.InfoProduit;
 import exceptions.TraitementFichierException;
 import utils.ConnectionBDD;
 
-public class ControllerJDBCdao {
+public class JDBCdaoGenerique {
 
-	private static final Logger LOGGER = Logger.getLogger(ControllerJDBCdao.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(JDBCdaoGenerique.class.getName());
 
 	public Connection connection;
 	public String nomTable;
 	public int nbAttributs;
 	public ArrayList<String> nomsAttributs;
 
-	public ControllerJDBCdao(Connection connection) {
+	public JDBCdaoGenerique(Connection connection) {
 		this.connection = connection;
 	}
 
@@ -37,32 +37,62 @@ public class ControllerJDBCdao {
 	public int insert(InfoProduit model) {
 		// TODO Auto-generated method stub
 
-		int idNewRow = 0;
+		int idRow = 0;
+		
+		//System.out.println("Taille nb Attributs : " + model.getNbAttributsModel() );
 
 		try {
-			StringBuilder builtString = new StringBuilder();
-			builtString.append("INSERT INTO ").append(model.getNomModel())
-					.append(" " + attributsToFormatSQL(model) + " ").append(" VALUES ")
-					.append(nbAttributsToFormatSQL(model));
-			// Si l'objet n'est pas déjà enregistrée en BDD, on l'insert
-			if (!rowDejaExistant(model.getValeurIdentifiant(),model)) {
-				PreparedStatement insert = connection.prepareStatement(builtString.toString(), Statement.RETURN_GENERATED_KEYS);
+
+			if (!rowDejaExistant(model.getValeurIdentifiant(), model)) {
+				
+				StringBuilder builtString = new StringBuilder();
+				builtString.append("INSERT INTO ").append(model.getNomModel())
+						.append(" " + attributsToFormatSQL(model) + " ").append(" VALUES ")
+						.append(nbAttributsToFormatSQL(model));
+				
+				PreparedStatement insert = connection.prepareStatement(builtString.toString(),
+						Statement.RETURN_GENERATED_KEYS);
 
 				for (int i = 1; i <= model.getNbAttributsModel(); i++) {
-					insert.setString(i, model.getValeurAttributsModel().get(i-1));
+					insert.setString(i, model.getValeurAttributsModel().get(i - 1));
+					//System.out.println("Test controller.insert() : " + model.getValeurAttributsModel().get(i - 1) );
 				}
+				
 				insert.execute();
 				ResultSet result = insert.getGeneratedKeys();
 				if (result.next()) {
-					idNewRow = result.getInt(1);
+					idRow = result.getInt(1);
 				}
+			} else {
+				idRow = getIDFromNom(model.getNomModel(), model);
 			}
 		} catch (SQLException e) {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
 
-		return idNewRow;
+		return idRow;
+	}
+
+	public String selectRowLike(InfoProduit model) {
+		String nomDansBDD = "NON ENREGISTRE";
+		
+		try {
+				StringBuilder builtString = new StringBuilder();
+				builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
+						.append(model.getNomModel()).append(" = ?");
+				PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
+				selectWhereString.setString(1, model.getValeurIdentifiant());
+				ResultSet result = selectWhereString.executeQuery();
+				if (result.next()) {
+					nomDansBDD = result.getString(2);
+			}
+			
+		} catch (SQLException e) {
+			// transformer SQLException en ComptaException
+			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
+		}	
+		return nomDansBDD;
 	}
 
 	public String nbAttributsToFormatSQL(InfoProduit model) {
@@ -78,6 +108,7 @@ public class ControllerJDBCdao {
 	}
 
 	public String attributsToFormatSQL(InfoProduit model) {
+		
 		String stringAttributs = "(";
 
 		for (String nomAttribut : model.getNomAttributsModel()) {
@@ -88,16 +119,16 @@ public class ControllerJDBCdao {
 		return stringAttributs;
 	}
 
-	public String getNomFromID(int idACherche) {
-		String nomRow = null;
+	public String getNomFromID(int idACherche, InfoProduit model) {
+		String nomRow = "ROW INNEXISTANT";
 
 		try {
 			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ").append(this.nomTable).append(" WHERE id_").append(this.nomTable)
+			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE id_").append(model.getNomModel())
 					.append(" = ?");
-			PreparedStatement insertEntite = connection.prepareStatement("SELECT * FROM `entite` WHERE id_entite= ?");
-			insertEntite.setInt(1, idACherche);
-			ResultSet result = insertEntite.executeQuery();
+			PreparedStatement insertRow = connection.prepareStatement(builtString.toString());
+			insertRow.setInt(1, idACherche);
+			ResultSet result = insertRow.executeQuery();
 			if (result.next()) {
 				nomRow = result.getString(2);
 			}
@@ -107,9 +138,6 @@ public class ControllerJDBCdao {
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
 
-		finally {
-			ConnectionBDD.closeConnection(connection, LOGGER);
-		}
 		return nomRow;
 
 	}
@@ -126,11 +154,13 @@ public class ControllerJDBCdao {
 
 		try {
 			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_").append(model.getNomModel())
-					.append(" = ?");
+			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
+					.append(model.getNomModel()).append(" = ?");
 			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
-			selectWhereString.setString(1, nomAChercher);
+			selectWhereString.setString(1, model.getValeurIdentifiant());
 			ResultSet result = selectWhereString.executeQuery();
+			
+			//System.out.println( "Test controller.getIdFromNom : " + builtString.toString() + " var = " + model.getValeurIdentifiant() );
 			if (result.next()) {
 				idRow = result.getInt(1);
 			}
@@ -144,7 +174,7 @@ public class ControllerJDBCdao {
 
 	public boolean rowDejaExistant(String stringAChercher, InfoProduit model) {
 		boolean bool = false;
-		if (getIDFromNom(stringAChercher, model ) != 0) {
+		if (getIDFromNom(stringAChercher, model) != 0) {
 			bool = true;
 		}
 		return bool;
