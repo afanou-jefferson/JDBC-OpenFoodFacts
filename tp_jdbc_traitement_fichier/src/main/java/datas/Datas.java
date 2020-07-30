@@ -3,16 +3,26 @@ package datas;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import jdbc.ControllerJDBCdao;
+import jdbc.JDBCdaoAdditif;
+import jdbc.JDBCdaoAllergene;
+import jdbc.JDBCdaoCategorie;
+import jdbc.JDBCdaoIngredient;
+import jdbc.JDBCdaoMarque;
+import jdbc.JDBCdaoProduit;
 import utils.ArrayListToString;
 import utils.CheckStringSimilaire;
 
 public class Datas {
 
+	Connection connection;
+	
 	ArrayList<Additif> listeAdditif = new ArrayList<Additif>();
 	ArrayList<Categorie> listeCategorie = new ArrayList<Categorie>();
 	ArrayList<Ingredient> listeIngredient = new ArrayList<Ingredient>();
@@ -20,21 +30,29 @@ public class Datas {
 	ArrayList<Produit> listeProduit = new ArrayList<Produit>();
 	ArrayList<Allergene> listeAllergene = new ArrayList<Allergene>();
 
-	public Datas(File fichier) throws IllegalArgumentException, IllegalAccessException {
+	public Datas(File fichier, Connection connection) throws IllegalArgumentException, IllegalAccessException {
+
+		this.connection = connection;
+		//JDBCdaoAdditif daoAdditif = new JDBCdaoAdditif(this.connection);
+		//JDBCdaoCategorie daoCategorie = new JDBCdaoCategorie(this.connection);
+		//JDBCdaoMarque daoMarque = new JDBCdaoMarque(this.connection);
+		//JDBCdaoProduit daoProduit = new JDBCdaoProduit(this.connection);
+		//JDBCdaoAllergene daoAllergne = new JDBCdaoAllergene(this.connection);
+		ControllerJDBCdao daoGenerique = new ControllerJDBCdao(this.connection);
 
 		try {
-			// Lecture du fichier
+		
 			File file = fichier;
 			List<String> lignes = FileUtils.readLines(file, "UTF-8");
 
 			for (int i = 1; i < lignes.size(); i++) { // Start 1 pour sauter ligne intitules categories
 				String[] morceaux = lignes.get(i).split("\\|", -1);
 
-				Categorie newCat = traitementCategorie(morceaux[0]);
+				Categorie categorieProduit = traitementCategorie(morceaux[0]);
 				ArrayList<Marque> currentProductMarques = traitementMarque(morceaux[1]);
 				String nomProduit = morceaux[2];
 				String gradeNutriProduit = morceaux[3];
-				ArrayList<Ingredient> currentProductIngredients = traitementIngredients(morceaux[4]);
+				traitementIngredients(morceaux[4]);
 				ArrayList<Allergene> currentProductAllergenes = traitementAllergenes(morceaux[28]);
 				ArrayList<Additif> currentProductAdditifs = traitementAdditifs(morceaux[29]);
 
@@ -50,14 +68,10 @@ public class Datas {
 					compteurField++;
 				}
 
-				Produit currentProduit = new Produit(newCat, currentProductMarques, nomProduit, gradeNutriProduit,
-						nutri, currentProductIngredients, currentProductAllergenes, currentProductAdditifs);
+				//daoProduit.insert(nomProduit, gradeNutriProduit, daoCategorie.insert(categorieProduit));
 
-				// On part du principe qu'il n'y a que Produits uniques dans le fichier pour le
-				// moment
-				listeProduit.add(currentProduit);
 				System.out.println(i);
-				//System.out.println(currentProduit.toString());
+	
 			}
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -72,16 +86,16 @@ public class Datas {
 
 		for (String nomAdd : elemStringAdditifs) {
 
-			String cleanAdditif = nomAdd.replaceAll("[^\\w]\\s", "").replaceAll("[\\+\\.\\^,*%]", "")
-					.replaceAll("[\\_\\-]", " ").replace("fr:", "").replace("en:", "").trim();
+			String cleanAdditif = nomAdd.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
+					.replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", "").trim();
 
 			if (!CheckStringSimilaire.similaireDejaExistant(cleanAdditif, currentProductAdditifs, 5)) {
 				Additif newAdditif = new Additif(cleanAdditif);
 				currentProductAdditifs.add(newAdditif);
 
-				if (!CheckStringSimilaire.similaireDejaExistant(cleanAdditif, this.listeAdditif, 5)) {
-					this.listeAdditif.add(newAdditif);
-				}
+//				if (!CheckStringSimilaire.similaireDejaExistant(cleanAdditif, this.listeAdditif, 5)) {
+//					this.listeAdditif.add(newAdditif);
+//				}
 			}
 		}
 		return currentProductAdditifs;
@@ -92,31 +106,31 @@ public class Datas {
 		ArrayList<Allergene> currentProductAllergenes = new ArrayList<Allergene>();
 
 		for (String nomAll : elemStringAllergenes) {
-			String cleanAllergene = nomAll.replaceAll("[^\\w]\\s", "").replaceAll("[\\+\\.\\^,*%]", "")
+			String cleanAllergene = nomAll.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
 					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "").replace("en:", "").trim();
 
 			if (!CheckStringSimilaire.similaireDejaExistant(cleanAllergene, currentProductAllergenes, 5)) {
 				Allergene newAllergene = new Allergene(cleanAllergene);
 				currentProductAllergenes.add(newAllergene);
-
-				if (!CheckStringSimilaire.similaireDejaExistant(cleanAllergene, listeAllergene, 5)) {
-					this.listeAllergene.add(newAllergene);
-				}
+//
+//				if (!CheckStringSimilaire.similaireDejaExistant(cleanAllergene, listeAllergene, 5)) {
+//					this.listeAllergene.add(newAllergene);
+//				}
 			}
 		}
 		return currentProductAllergenes;
 	}
 
 	private Categorie traitementCategorie(String morceauString) {
-		String cleanCategorie = morceauString.replaceAll("[^\\w]\\s", "").replaceAll("[\\+\\.\\^,*%]", "")
-				.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "").replace("en:", "").trim();
+		String cleanCategorie = morceauString.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
+				.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").trim();
 		Categorie newCat = new Categorie(cleanCategorie);
 
 		boolean categorieListed = false;
-
-		if (!CheckStringSimilaire.similaireDejaExistant(cleanCategorie, this.listeCategorie, 5)) {
-			this.listeCategorie.add(newCat);
-		}
+//
+//		if (!CheckStringSimilaire.similaireDejaExistant(cleanCategorie, this.listeCategorie, 5)) {
+//			this.listeCategorie.add(newCat);
+//		}
 		return newCat;
 	}
 
@@ -126,18 +140,14 @@ public class Datas {
 																			// mais on place des marques ( impl
 																			// Entite ) dedans
 		for (String nomMarque : elemStringMarque) {
-			String cleanNomMarque = nomMarque.replaceAll("[^\\w]\\s", "").replaceAll("[\\+\\.\\^,*%]", "")
-					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "").replace("en:", "").trim();
+			String cleanNomMarque = nomMarque.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
+					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").trim();
 
 			if (!CheckStringSimilaire.similaireDejaExistant(cleanNomMarque, currentProductMarques, 5)) {
 				Marque newMarque = new Marque(cleanNomMarque);
 				currentProductMarques.add(newMarque);
 
-				// Need au moins 5 differents pour qu'il soit considéré comme "nouveau"
-				boolean marqueListedDatas = CheckStringSimilaire.similaireDejaExistant(cleanNomMarque, this.listeMarque,
-						5);
-
-				if (!marqueListedDatas) {
+				if (CheckStringSimilaire.similaireDejaExistant(cleanNomMarque, this.listeMarque, 5)) {
 					this.listeMarque.add(newMarque);
 				}
 			}
@@ -145,25 +155,41 @@ public class Datas {
 		return currentProductMarques;
 	}
 
-	private ArrayList<Ingredient> traitementIngredients(String morceauString) {
+	private void traitementIngredients(String morceauString) {
+		
+		JDBCdaoIngredient daoIngredient = new JDBCdaoIngredient(this.connection);
+		ControllerJDBCdao daoGenerique = new ControllerJDBCdao(this.connection);
+		
 		String[] elemStringIngredient = morceauString.split(",");
 		ArrayList<Ingredient> currentProductIngredients = new ArrayList<Ingredient>();
 
 		for (String nomIng : elemStringIngredient) {
 
-			String cleanIngredient = nomIng.replaceAll("[^\\w]\\s", "").replaceAll("[\\+\\.\\^,*%]", "")
-					.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", "").replace("en:", "").trim();
+			String cleanIngredient = nomIng.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
+					.replaceAll("[0-9]", "").replaceAll("[\\_\\]\\-\\[\\)\\(]", " ").replace("fr:", " ")
+					.replace("en:", " ").trim();
 
-			if (!CheckStringSimilaire.similaireDejaExistant(cleanIngredient, currentProductIngredients, 5)) {
+			Ingredient ingredientFromBDD = daoIngredient.selectIngredientAlike(cleanIngredient);
+			if (daoIngredient.selectIngredientAlike(cleanIngredient) == null) {
 				Ingredient newIngredient = new Ingredient(cleanIngredient);
 				currentProductIngredients.add(newIngredient);
-
-				if (!CheckStringSimilaire.similaireDejaExistant(cleanIngredient, listeIngredient, 5)) {
-					this.listeIngredient.add(newIngredient);
-				}
+			} else {
+				currentProductIngredients.add(ingredientFromBDD);
 			}
+
+			/*
+			 * if (!CheckStringSimilaire.similaireDejaExistant(cleanIngredient,
+			 * currentProductIngredients, 5)) { Ingredient newIngredient = new
+			 * Ingredient(cleanIngredient); currentProductIngredients.add(newIngredient);
+			 */
+//
+//				if (!CheckStringSimilaire.similaireDejaExistant(cleanIngredient, listeIngredient, 5)) {
+//					this.listeIngredient.add(newIngredient);
+//				}
 		}
-		return currentProductIngredients;
+		for (Ingredient ingredient : currentProductIngredients) {
+			daoGenerique.insert(ingredient);
+		}
 	}
 
 	public static boolean isANumber(String chaine) {

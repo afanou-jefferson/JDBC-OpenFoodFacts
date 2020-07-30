@@ -1,6 +1,8 @@
 package datas;
 
-public class Marque implements Entite{
+import java.util.ArrayList;
+
+public class Marque extends InfoProduit{
 	
 	private String nomMarque;
 
@@ -25,12 +27,23 @@ public class Marque implements Entite{
 	public String getEntite() {
 		return this.nomMarque;
 	}
-	
+
 	@Override
-	public String getClassEntite() {
+	public String getValeurIdentifiant() {
 		// TODO Auto-generated method stub
-		return this.getClass().getName();
+		return this.nomMarque;
 	}
+
+	@Override
+	public ArrayList<String> getValeurAttributsModel() {
+		ArrayList<String> listeValeurs = new ArrayList<String>();
+		
+		listeValeurs.add(this.nomMarque);
+		
+		return listeValeurs;
+	}
+	
+	
 	
 
 }

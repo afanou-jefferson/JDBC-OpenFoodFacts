@@ -26,7 +26,7 @@ import utils.ConnectionBDD;
 
 public class TestJeuReduit {
 
-	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
+	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException, SQLException {
 
 		
 		Connection connectionDB = ConnectionBDD.getConnection();
@@ -38,7 +38,7 @@ public class TestJeuReduit {
 		chrono.start(); // démarrage du chrono
 		
 		JDBCdaoProduit daoProduit = new JDBCdaoProduit(connectionDB);
-		Datas myDB = new Datas(fichier);
+		Datas myDB = new Datas(fichier, connectionDB);
 		for ( Produit produit: myDB.getListeProduit()) {
 			daoProduit.insert(produit);
 		}
@@ -51,6 +51,10 @@ public class TestJeuReduit {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+		finally {
+			connectionDB.close();
 		}
 	}
 }

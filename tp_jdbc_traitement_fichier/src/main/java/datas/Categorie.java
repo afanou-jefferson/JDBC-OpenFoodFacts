@@ -1,37 +1,41 @@
 package datas;
 
-public class Categorie implements Entite{ 
-	
-	private String libelleCategorie;
+import java.util.ArrayList;
 
-	public Categorie(String libelleCategorie) {
+public class Categorie extends InfoProduit{ 
+	
+	private String nomCategorie;
+
+	public Categorie(String nomCategorie) {
 		super();
-		this.libelleCategorie = libelleCategorie;
+		this.nomCategorie = nomCategorie;
 	}
 
 	public String getLibelleCategorie() {
-		return libelleCategorie;
+		return nomCategorie;
 	}
 
-	public void setLibelleCategorie(String libelleCategorie) {
-		this.libelleCategorie = libelleCategorie;
+	public void setLibelleCategorie(String nomCategorie) {
+		this.nomCategorie = nomCategorie;
 	}
 
 	@Override
 	public String toString() {
-		return "Categorie [libelleCategorie=" + libelleCategorie + "]";
+		return "Categorie [nomCategorie=" + nomCategorie + "]";
 	}
 
 	@Override
-	public String getEntite() {
+	public String getValeurIdentifiant() {
 		// TODO Auto-generated method stub
-		return this.getLibelleCategorie();
+		return this.nomCategorie;
 	}
-	
 	@Override
-	public String getClassEntite() {
-		// TODO Auto-generated method stub
-		return this.getClass().getName();
+	public ArrayList<String> getValeurAttributsModel() {
+		ArrayList<String> listeValeurs = new ArrayList<String>();
+		
+		listeValeurs.add(this.nomCategorie);
+		
+		return listeValeurs;
 	}
 	
 	

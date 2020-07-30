@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,15 +29,39 @@ public class JDBCdaoProduit implements IProduitDao {
 
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoProduit.class.getName());
 
+	public int insert(String nomProduit, String gradeNutri,int idCategorie ) {
+		
+		try {
+		int idNewProduit = 0;
+		
+		if (!produitDejaExistant(nomProduit)) {
+			PreparedStatement insertProduit = connection.prepareStatement(
+					"INSERT INTO `produit`(`nom_Produit`, `grade_Nutri_Produit`, `id_Categorie`) VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS);
+			insertProduit.setString(1, nomProduit);
+			insertProduit.setString(2, gradeNutri);
+			insertProduit.setInt(3, idCategorie);
+			insertProduit.execute();
+			ResultSet result = insertProduit.getGeneratedKeys();
+			if (result.next()) {
+				idNewProduit = result.getInt(1); 
+				System.out.println("Test OK");
+			}
+		}	
+		return idNewProduit;
+		} catch (SQLException e) {
+			// transformer SQLException en ComptaException
+			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
+		}
+
+	}
+	
 	@Override
 	public void insert(Produit produit) {
 		// TODO Auto-generated method stub
 		// Connection connection = null;
 
 		try {
-			// connection = ConnectionBDD.getConnection();
-			// ConnectionBDD.testConnection(connection, LOGGER);
-
+	
 			// On check déjà que la catégorie est présente pour respecter la contrainte de
 			// clé étrangère
 			JDBCdaoCategorie daoCategorie = new JDBCdaoCategorie(connection);

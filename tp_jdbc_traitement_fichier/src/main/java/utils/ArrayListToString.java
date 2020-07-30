@@ -3,7 +3,7 @@ package utils;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import datas.Entite;
+import datas.InfoProduit;
 
 public class ArrayListToString {
 	
@@ -23,12 +23,12 @@ public class ArrayListToString {
 		return retour;	
 	}
 	
-	public static ArrayList<String> arrayEntiteToString(ArrayList<Entite> list){
+	public static ArrayList<String> arrayEntiteToString(ArrayList<InfoProduit> list){
 		
 		ArrayList<String> retour = new ArrayList<String>();
 		
-		for ( Entite ent : list) {
-			retour.add(ent.getEntite());
+		for ( InfoProduit info : list) {
+			retour.add(info.getValeurIdentifiant());
 		}
 		
 		return retour;

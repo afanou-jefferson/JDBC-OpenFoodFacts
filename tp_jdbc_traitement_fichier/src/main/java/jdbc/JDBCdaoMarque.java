@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Logger;
 
 import datas.Marque;
@@ -19,6 +20,29 @@ public class JDBCdaoMarque implements IMarqueDao {
 	}
 
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoMarque.class.getName());
+
+	public int insert(String nomMarque) {
+
+		try {
+			int idNewMarque = 0;
+
+			if (!MarqueDejaExistante(nomMarque)) {
+				PreparedStatement insertMarque = connection.prepareStatement(
+						"INSERT INTO `produit`(`nom_Marque`, `grade_Nutri_Marque`, `id_Categorie`) OUTPUT Inserted.id_produit VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS);
+				insertMarque.setString(1, nomMarque);
+				ResultSet result = insertMarque.executeQuery();
+				if (result.next()) {
+					idNewMarque = result.getInt(1);
+					System.out.println("Test OK");
+				}
+			}
+			return idNewMarque;
+		} catch (SQLException e) {
+			// transformer SQLException en ComptaException
+			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
+		}
+
+	}
 
 	/**
 	 * Insert la ingrédient placée en paramètre si elle n'est pas déjà enregistrée
@@ -69,10 +93,10 @@ public class JDBCdaoMarque implements IMarqueDao {
 
 		Marque selectedCat = null;
 
-		//Connection connection = null;
+		// Connection connection = null;
 		try {
-			//connection = ConnectionBDD.getConnection();
-			//ConnectionBDD.testConnection(connection, LOGGER);
+			// connection = ConnectionBDD.getConnection();
+			// ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertMarque = connection.prepareStatement("SELECT * FROM `marque` WHERE nom_marque= ?");
 			insertMarque.setString(1, nomMarque);
@@ -88,7 +112,7 @@ public class JDBCdaoMarque implements IMarqueDao {
 		}
 
 		finally {
-			//ConnectionBDD.closeConnection(connection, LOGGER);
+			// ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
@@ -97,10 +121,10 @@ public class JDBCdaoMarque implements IMarqueDao {
 	public Marque selectMarque(int idMarque) {
 		Marque selectedCat = null;
 
-		//Connection connection = null;
+		// Connection connection = null;
 		try {
-			//connection = ConnectionBDD.getConnection();
-			//ConnectionBDD.testConnection(connection, LOGGER);
+			// connection = ConnectionBDD.getConnection();
+			// ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertMarque = connection.prepareStatement("SELECT * FROM `marque` WHERE id_marque= ?");
 			insertMarque.setInt(1, idMarque);
@@ -116,7 +140,7 @@ public class JDBCdaoMarque implements IMarqueDao {
 		}
 
 		finally {
-			//ConnectionBDD.closeConnection(connection, LOGGER);
+			// ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 		return selectedCat;
 
@@ -132,10 +156,10 @@ public class JDBCdaoMarque implements IMarqueDao {
 
 		int idCat = 0;
 
-		//Connection connection = null;
+		// Connection connection = null;
 		try {
-			//connection = ConnectionBDD.getConnection();
-			//ConnectionBDD.testConnection(connection, LOGGER);
+			// connection = ConnectionBDD.getConnection();
+			// ConnectionBDD.testConnection(connection, LOGGER);
 
 			PreparedStatement insertMarque = connection.prepareStatement("SELECT * FROM `marque` WHERE nom_marque= ?");
 			insertMarque.setString(1, nomMarque);
@@ -150,7 +174,7 @@ public class JDBCdaoMarque implements IMarqueDao {
 		}
 
 		finally {
-			//ConnectionBDD.closeConnection(connection, LOGGER);
+			// ConnectionBDD.closeConnection(connection, LOGGER);
 		}
 
 		return idCat;

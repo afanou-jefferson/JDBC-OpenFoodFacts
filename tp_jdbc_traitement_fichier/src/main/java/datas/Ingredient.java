@@ -1,37 +1,47 @@
 package datas;
 
-public class Ingredient implements Entite{
-	
-	private String libelleIngredient;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
-	public Ingredient(String libelleIngredient) {
+public class Ingredient extends InfoProduit {
+
+	public String nom_Ingredient;
+
+	public Ingredient(String nomIngredient) {
 		super();
-		this.libelleIngredient = libelleIngredient;
+		this.nom_Ingredient = nomIngredient;
 	}
 
 	public String getLibelleIngredient() {
-		return libelleIngredient;
+		return nom_Ingredient;
 	}
 
-	public void setLibelleIngredient(String libelleIngredient) {
-		this.libelleIngredient = libelleIngredient;
+	public void setLibelleIngredient(String nomIngredient) {
+		this.nom_Ingredient = nomIngredient;
 	}
 
 	@Override
 	public String toString() {
-		return "Ingredient [libelleIngredient=" + libelleIngredient + "]";
+		return "Ingredient [nomIngredient=" + nom_Ingredient + "]";
 	}
-	
 
 	public String getEntite() {
 		return this.getLibelleIngredient();
 	}
-	
+
 	@Override
-	public String getClassEntite() {
+	public String getValeurIdentifiant() {
 		// TODO Auto-generated method stub
-		return this.getClass().getName();
+		return this.nom_Ingredient;
 	}
-	
+
+	@Override
+	public ArrayList<String> getValeurAttributsModel() {
+		ArrayList<String> listeValeurs = new ArrayList<String>();
+
+		listeValeurs.add(this.nom_Ingredient);
+
+		return listeValeurs;
+	}
 
 }

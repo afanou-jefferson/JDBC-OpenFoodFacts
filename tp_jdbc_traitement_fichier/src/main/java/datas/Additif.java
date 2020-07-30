@@ -1,41 +1,44 @@
 package datas;
 
-public class Additif implements Entite{
-	
-	public String libelleAdditif;
+import java.util.ArrayList;
 
-	public Additif(String libelleAdditif) {
+public class Additif extends InfoProduit{
+	
+	public String nomAdditif;
+
+	public Additif(String nomAdditif) {
 		super();
-		this.libelleAdditif = libelleAdditif;
+		this.nomAdditif = nomAdditif;
 	}
 
 	public String getLibelleAdditif() {
-		return libelleAdditif;
+		return nomAdditif;
 	}
 
-	public void setLibelleAdditif(String libelleAdditif) {
-		this.libelleAdditif = libelleAdditif;
+	public void setLibelleAdditif(String nomAdditif) {
+		this.nomAdditif = nomAdditif;
 	}
 
 	@Override
 	public String toString() {
-		return "Additif [libelleAdditif=" + libelleAdditif + "]";
+		return "Additif [nomAdditif=" + nomAdditif + "]";
 	}
 
-	@Override
-	public String getEntite() {
-		// TODO Auto-generated method stub
-		return this.libelleAdditif;
-	}
 
 	@Override
-	public String getClassEntite() {
+	public String getValeurIdentifiant() {
 		// TODO Auto-generated method stub
-		return this.getClass().getName();
+		return this.nomAdditif;
 	}
 	
-	
-	
+	@Override
+	public ArrayList<String> getValeurAttributsModel() {
+		ArrayList<String> listeValeurs = new ArrayList<String>();
+		
+		listeValeurs.add(this.nomAdditif);
+		
+		return listeValeurs;
+	}
 
 
 }

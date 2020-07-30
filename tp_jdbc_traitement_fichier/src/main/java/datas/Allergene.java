@@ -1,39 +1,43 @@
 package datas;
 
-public class Allergene implements Entite{
-	
-	private String libelleAllergene;
+import java.util.ArrayList;
 
-	public Allergene(String libelleAllergene) {
+public class Allergene extends InfoProduit{
+	
+	private String nomAllergene;
+
+	public Allergene(String nomAllergene) {
 		super();
-		this.libelleAllergene = libelleAllergene;
+		this.nomAllergene = nomAllergene;
 	}
 
 	public String getLibelleAllergene() {
-		return libelleAllergene;
+		return nomAllergene;
 	}
 
-	public void setLibelleAllergene(String libelleAllergene) {
-		this.libelleAllergene = libelleAllergene;
+	public void setLibelleAllergene(String nomAllergene) {
+		this.nomAllergene = nomAllergene;
 	}
 
 	@Override
 	public String toString() {
-		return "Allergene [libelleAllergene=" + libelleAllergene + "]";
+		return "Allergene [nomAllergene=" + nomAllergene + "]";
 	}
 
 	@Override
-	public String getEntite() {
+	public String getValeurIdentifiant() {
 		// TODO Auto-generated method stub
-		return this.libelleAllergene;
+		return this.nomAllergene;
 	}
 	
 	@Override
-	public String getClassEntite() {
-		// TODO Auto-generated method stub
-		return this.getClass().getName();
+	public ArrayList<String> getValeurAttributsModel() {
+		ArrayList<String> listeValeurs = new ArrayList<String>();
+		
+		listeValeurs.add(this.nomAllergene);
+		
+		return listeValeurs;
 	}
-	
 	
 	
 	
