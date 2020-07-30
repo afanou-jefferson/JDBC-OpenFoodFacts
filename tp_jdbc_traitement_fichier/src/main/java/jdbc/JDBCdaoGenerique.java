@@ -1,5 +1,6 @@
 package jdbc;
 
+import java.awt.List;
 import java.lang.ProcessHandle.Info;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,8 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import datas.CustomRow;
 import datas.InfoProduit;
 import exceptions.TraitementFichierException;
 import utils.ConnectionBDD;
@@ -38,33 +41,41 @@ public class JDBCdaoGenerique {
 		// TODO Auto-generated method stub
 
 		int idRow = 0;
-		
-		//System.out.println("Taille nb Attributs : " + model.getNbAttributsModel() );
+
+		// System.out.println("Taille nb Attributs : " + model.getNbAttributsModel() );
 
 		try {
 
-			if (!rowDejaExistant(model.getValeurIdentifiant(), model)) {
-				
-				StringBuilder builtString = new StringBuilder();
-				builtString.append("INSERT INTO ").append(model.getNomModel())
-						.append(" " + attributsToFormatSQL(model) + " ").append(" VALUES ")
-						.append(nbAttributsToFormatSQL(model));
-				
-				PreparedStatement insert = connection.prepareStatement(builtString.toString(),
-						Statement.RETURN_GENERATED_KEYS);
+			int matchID = getIDFromNom(model.getValeurIdentifiant(), model);
 
-				for (int i = 1; i <= model.getNbAttributsModel(); i++) {
-					insert.setString(i, model.getValeurAttributsModel().get(i - 1));
-					//System.out.println("Test controller.insert() : " + model.getValeurAttributsModel().get(i - 1) );
-				}
-				
-				insert.execute();
-				ResultSet result = insert.getGeneratedKeys();
-				if (result.next()) {
-					idRow = result.getInt(1);
-				}
+			if (matchID == -1) { // Si différent alors on a un enregistrement exactement pareil
+				idRow = matchID;
 			} else {
-				idRow = getIDFromNom(model.getNomModel(), model);
+				int alikeID = selectIDRowLike(model);
+				if (alikeID != -1) { // Si différent de -1 alors on a un enregistrement similaire
+					idRow = alikeID;
+				} else { // Sinon insert classique
+
+					StringBuilder builtString = new StringBuilder();
+					builtString.append("INSERT INTO ").append(model.getNomModel())
+							.append(" " + attributsToFormatSQL(model) + " ").append(" VALUES ")
+							.append(nbAttributsToFormatSQL(model));
+
+					PreparedStatement insert = connection.prepareStatement(builtString.toString(),
+							Statement.RETURN_GENERATED_KEYS);
+
+					for (int i = 1; i <= model.getNbAttributsModel(); i++) {
+						insert.setString(i, model.getValeurAttributsModel().get(i - 1));
+						// System.out.println("Test controller.insert() : " +
+						// model.getValeurAttributsModel().get(i - 1) );
+					}
+
+					insert.execute();
+					ResultSet result = insert.getGeneratedKeys();
+					if (result.next()) {
+						idRow = result.getInt(1);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			// transformer SQLException en ComptaException
@@ -74,25 +85,50 @@ public class JDBCdaoGenerique {
 		return idRow;
 	}
 
-	public String selectRowLike(InfoProduit model) {
-		String nomDansBDD = "NON ENREGISTRE";
+	public CustomRow selectRowLike(InfoProduit model) {
+		//String nomDansBDD = "NON ENREGISTRE";
+		
+		CustomRow infosRow = new CustomRow();
 		
 		try {
-				StringBuilder builtString = new StringBuilder();
-				builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
-						.append(model.getNomModel()).append(" = ?");
-				PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
-				selectWhereString.setString(1, model.getValeurIdentifiant());
-				ResultSet result = selectWhereString.executeQuery();
-				if (result.next()) {
-					nomDansBDD = result.getString(2);
+			StringBuilder builtString = new StringBuilder();
+			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
+					.append(model.getNomModel()).append(" = ?");
+			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
+			selectWhereString.setString(1, model.getValeurIdentifiant());
+			ResultSet result = selectWhereString.executeQuery();
+			if (result.next()) {
+				infosRow.setId_Row(result.getInt(1));
+				infosRow.setNom_Row(result.getString(2));
 			}
-			
+
 		} catch (SQLException e) {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
-		}	
-		return nomDansBDD;
+		}
+		return infosRow;
+	}
+
+	public int selectIDRowLike(InfoProduit model) {
+
+		int idRowAlike = -1;
+
+		try {
+			StringBuilder builtString = new StringBuilder();
+			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
+					.append(model.getNomModel()).append(" = ?");
+			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
+			selectWhereString.setString(1, model.getValeurIdentifiant());
+			ResultSet result = selectWhereString.executeQuery();
+			if (result.next()) {
+				idRowAlike = result.getInt(1);
+			}
+
+		} catch (SQLException e) {
+			// transformer SQLException en ComptaException
+			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
+		}
+		return idRowAlike;
 	}
 
 	public String nbAttributsToFormatSQL(InfoProduit model) {
@@ -108,7 +144,7 @@ public class JDBCdaoGenerique {
 	}
 
 	public String attributsToFormatSQL(InfoProduit model) {
-		
+
 		String stringAttributs = "(";
 
 		for (String nomAttribut : model.getNomAttributsModel()) {
@@ -124,8 +160,8 @@ public class JDBCdaoGenerique {
 
 		try {
 			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE id_").append(model.getNomModel())
-					.append(" = ?");
+			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE id_")
+					.append(model.getNomModel()).append(" = ?");
 			PreparedStatement insertRow = connection.prepareStatement(builtString.toString());
 			insertRow.setInt(1, idACherche);
 			ResultSet result = insertRow.executeQuery();
@@ -150,7 +186,7 @@ public class JDBCdaoGenerique {
 	 */
 	public int getIDFromNom(String nomAChercher, InfoProduit model) {
 
-		int idRow = 0;
+		int idRow = -1;
 
 		try {
 			StringBuilder builtString = new StringBuilder();
@@ -159,8 +195,9 @@ public class JDBCdaoGenerique {
 			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
 			selectWhereString.setString(1, model.getValeurIdentifiant());
 			ResultSet result = selectWhereString.executeQuery();
-			
-			//System.out.println( "Test controller.getIdFromNom : " + builtString.toString() + " var = " + model.getValeurIdentifiant() );
+
+			// System.out.println( "Test controller.getIdFromNom : " +
+			// builtString.toString() + " var = " + model.getValeurIdentifiant() );
 			if (result.next()) {
 				idRow = result.getInt(1);
 			}
