@@ -44,6 +44,15 @@ public class TestJeuReduit {
 		chrono.stop(); // arrêt
 		System.out.println(chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
 		
+		//System.out.println("Test out " + myDB.memoireLocaleIngredientsBDD.toString());
+		
+		System.out.println("Produits insérés = " + myDB.compteurProduits);
+		System.out.println("Catégories insérés = " + myDB.compteurCategorie);
+		System.out.println("Ingrédients insérés = " + myDB.compteurIngredients);
+		System.out.println("Allergenes insérés = " + myDB.compteurAllergenes);
+		System.out.println("Additifs insérés = " + myDB.compteurAdditifs);
+		
+		
 		try {
 			connectionDB.close();
 		} catch (SQLException e) {

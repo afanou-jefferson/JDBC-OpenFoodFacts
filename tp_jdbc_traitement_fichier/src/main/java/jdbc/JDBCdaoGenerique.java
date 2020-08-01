@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -41,13 +42,8 @@ public class JDBCdaoGenerique {
 
 		int idRow = 0;
 		try {
-			int matchID = getIDFromNom(model.getValeurIdentifiant(), model);
-
-			if (matchID != -1) { // Si différent alors on a un enregistrement exactement pareil
-				idRow = matchID;
-			} else {
 				int alikeID = selectIDRowLike(model);
-				if (alikeID != -1) { // Si différent de -1 alors on a un enregistrement similaire
+				if (alikeID != -1) { // Si différent de -1 alors on a un enregistrement similaire donc on passe et on renvoit cet ID
 					idRow = alikeID;
 				} else { // Sinon insert classique
 					StringBuilder builtString = new StringBuilder();
@@ -63,14 +59,15 @@ public class JDBCdaoGenerique {
 					for (int i = 1; i <= model.getNbAttributsModel(); i++) {
 						insert.setString(i, model.getValeurAttributsModel().get(i - 1));
 					}
-
+				
+					//System.out.println(insert.toString());
 					insert.execute();
+					
 					ResultSet result = insert.getGeneratedKeys();
 					if (result.next()) {
 						idRow = result.getInt(1);
 					}
 				}
-			}
 		} catch (SQLException e) {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
@@ -211,5 +208,28 @@ public class JDBCdaoGenerique {
 			bool = true;
 		}
 		return bool;
+	}
+
+	public HashMap<String,Integer> selectAllFromTable(String nomTable) {
+		
+		HashMap<String,Integer> tableExistanteEnBDD = new HashMap<String,Integer>();
+		
+		String query = "SELECT * FROM "+ nomTable;
+		
+		try {
+			PreparedStatement selectTable = connection.prepareStatement(query);
+			//selectTable.setString(1, nomTable);
+			System.out.println(selectTable.toString());
+			ResultSet result =  selectTable.executeQuery();
+			
+			while ( result.next() ) {
+				tableExistanteEnBDD.put(result.getString(2), result.getInt(1));
+			}
+			
+		return tableExistanteEnBDD;	
+			
+		} catch (SQLException e) {
+			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
+		}
 	}
 }

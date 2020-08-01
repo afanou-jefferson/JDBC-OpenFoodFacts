@@ -27,7 +27,7 @@ public class ApplicationOpenFoodFacts {
 		Datas myDB = new Datas(fichier, connectionDB);
 
 		chrono.stop(); // arrêt
-		System.out.println(chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
+		System.out.println("Temps pour opérations : " + chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
 
 		try {
 			connectionDB.close();
