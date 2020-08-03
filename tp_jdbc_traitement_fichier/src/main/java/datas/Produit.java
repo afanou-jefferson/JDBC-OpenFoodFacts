@@ -6,7 +6,7 @@ import utils.ArrayListToString;
 
 public class Produit {
 
-	private Categorie categorie;
+	private int idCategorie;
 	private ArrayList<Integer> listIDsMarques;
 	private String NomProduit;
 	private String gradeNutri;
@@ -15,11 +15,11 @@ public class Produit {
 	private ArrayList<Integer> listIDsAllergenes;
 	private ArrayList<Integer> listIDsAdditifs;
 
-	public Produit(Categorie categorie, ArrayList<Integer> listIDsMarques, String nomProduit, String gradeNutri,
+	public Produit(int idCategorie, ArrayList<Integer> listIDsMarques, String nomProduit, String gradeNutri,
 			ArrayList<Integer> listIDsIngredients, ArrayList<Integer> listIDsAllergenes,
 			ArrayList<Integer> listIDsAdditifs) {
 		super();
-		this.categorie = categorie;
+		this.idCategorie = idCategorie;
 		this.listIDsMarques = listIDsMarques;
 		NomProduit = nomProduit;
 		this.gradeNutri = gradeNutri;
@@ -27,14 +27,17 @@ public class Produit {
 		this.listIDsAllergenes = listIDsAllergenes;
 		this.listIDsAdditifs = listIDsAdditifs;
 	}
+	
 
-	public Categorie getCategorie() {
-		return categorie;
+	public int getIdCategorie() {
+		return idCategorie;
 	}
 
-	public void setCategorie(Categorie categorie) {
-		this.categorie = categorie;
+
+	public void setIdCategorie(int idCategorie) {
+		this.idCategorie = idCategorie;
 	}
+
 
 	public ArrayList<Integer> getListIDsIngredients() {
 		return listIDsIngredients;

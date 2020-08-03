@@ -40,23 +40,23 @@ public class JDBCdaoProduit {
 			// On check déjà que la catégorie est présente pour respecter la contrainte de
 			// clé étrangère
 
-			int idCategorie = daoGenerique.getIDFromNom(produit.getCategorie().getNomCategorie(),
-					produit.getCategorie());
+			//int idCategorie = daoGenerique.getIDFromNom(produit.getCategorie().getNomCategorie(),produit.getCategorie());
 
-			if (!produitDejaExistant(produit.getNomProduit())) {
+			//if (!produitDejaExistant(produit.getNomProduit())) {
 				PreparedStatement insertProduit = connection.prepareStatement(
 						"INSERT INTO `produit`(`nom_Produit`, `grade_Nutri_Produit`, `id_Categorie`) VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS);
 				insertProduit.setString(1, produit.getNomProduit());
 				insertProduit.setString(2, produit.getGradeNutri());
-				insertProduit.setInt(3, idCategorie);
+				insertProduit.setInt(3, produit.getIdCategorie());
 				insertProduit.execute();
 				
 				ResultSet result = insertProduit.getGeneratedKeys();
 				if (result.next()) {
 					idProduit = result.getInt(1);
 				}
-			}
+			//}
 
+			// Si l'insert renvoit -1, cad pas d'insert effectif
 			if ( idProduit ==-1 ) {
 				idProduit = getId_Produit(produit.getNomProduit());
 			}

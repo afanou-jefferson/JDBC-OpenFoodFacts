@@ -86,15 +86,17 @@ public class Datas {
 					compteurField++;
 				} */
 
-				Categorie categorieProduit = new Categorie(daoGenerique.getNomFromID(idCategorie, new Categorie()));
-				Produit newProduit = new Produit(categorieProduit, listIDsMarques, nomProduit, gradeNutriProduit,
+				//Categorie categorieProduit = new Categorie(daoGenerique.getNomFromID(idCategorie, new Categorie()));
+				Produit newProduit = new Produit(idCategorie, listIDsMarques, nomProduit, gradeNutriProduit,
 						listIDsIngredients, listIDsAllergenes, listIDsAdditifs);
+				
+				String cleanNomProduit = nettoyerString(nomProduit.toLowerCase());
 
 				
-				if ( memoireLocaleProduitsBDD.get(nettoyerString(nomProduit.toLowerCase())) == null ) {
+				if ( memoireLocaleProduitsBDD.get(cleanNomProduit) == null ) {
 					System.out.println("Produit buggé :" + nomProduit);
 					int idNewProduit = daoProduit.insert(newProduit);
-					memoireLocaleProduitsBDD.put(nomProduit.toLowerCase(), idNewProduit);
+					memoireLocaleProduitsBDD.put(cleanNomProduit, idNewProduit);
 					compteurProduits++;
 				}
 
@@ -235,24 +237,11 @@ public class Datas {
 		for (String nomIngredient : elemStringIngredient) {
 
 			String cleanIngredient = nettoyerString(nomIngredient);
-
-			/*Ingredient ingredientEnLecture = new Ingredient("");
-
-			if (cleanIngredient.equals("")) {
-				ingredientEnLecture = new Ingredient("ERREUR");
-			} else {
-				ingredientEnLecture = new Ingredient(cleanIngredient);
-			}*/
 		
 			Ingredient ingredientEnLecture = new Ingredient(cleanIngredient);
 
-			// String nomIngredientFromBDD =
-			// daoGenerique.selectRowLike(ingredientEnLecture).getNom_Row();
-
 			if (memoireLocaleIngredientsBDD.get(nettoyerString(ingredientEnLecture.getLibelleIngredient())) == null) {
 				
-				//System.out.println("Ingrédient buggé : " + ingredientEnLecture.getLibelleIngredient());
-
 				int idIngredientBDD = daoGenerique.insert(ingredientEnLecture);
 				//System.out.println("Test");
 				this.memoireLocaleIngredientsBDD.put(ingredientEnLecture.nom_Ingredient, idIngredientBDD);
@@ -354,9 +343,9 @@ public class Datas {
 
 	public static String nettoyerString(String rawString) {
 		
-		String cleanString = Normalizer.normalize(rawString, Normalizer.Form.NFD);
+		//String cleanString = Normalizer.normalize(rawString, Normalizer.Form.NFD);
 		
-		cleanString = rawString.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
+		String cleanString = rawString.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
 				.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").toLowerCase().trim();
 		cleanString = removeAccents(cleanString);
 		return cleanString;
