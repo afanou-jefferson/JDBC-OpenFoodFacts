@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import datas.CustomRow;
+import datas.Datas;
 import datas.InfoProduit;
 import exceptions.TraitementFichierException;
 import utils.ConnectionBDD;
@@ -218,12 +219,11 @@ public class JDBCdaoGenerique {
 		
 		try {
 			PreparedStatement selectTable = connection.prepareStatement(query);
-			//selectTable.setString(1, nomTable);
-			System.out.println(selectTable.toString());
+			//System.out.println(selectTable.toString());
 			ResultSet result =  selectTable.executeQuery();
 			
 			while ( result.next() ) {
-				tableExistanteEnBDD.put(result.getString(2), result.getInt(1));
+				tableExistanteEnBDD.put( Datas.nettoyerString(result.getString(2)), result.getInt(1));
 			}
 			
 		return tableExistanteEnBDD;	

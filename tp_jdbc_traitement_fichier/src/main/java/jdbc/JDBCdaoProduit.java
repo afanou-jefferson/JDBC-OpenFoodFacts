@@ -27,12 +27,13 @@ public class JDBCdaoProduit {
 		this.connection = connection;
 	}
 
-	public void insert(Produit produit) {
+	public int insert(Produit produit) {
 		// TODO Auto-generated method stub
 		// Connection connection = null;
 
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(connection);
 		JDBCdaoProduit daoProduit = new JDBCdaoProduit(connection);
+		int idProduit = -1;
 
 		try {
 
@@ -44,14 +45,21 @@ public class JDBCdaoProduit {
 
 			if (!produitDejaExistant(produit.getNomProduit())) {
 				PreparedStatement insertProduit = connection.prepareStatement(
-						"INSERT INTO `produit`(`nom_Produit`, `grade_Nutri_Produit`, `id_Categorie`) VALUES (?,?,?)");
+						"INSERT INTO `produit`(`nom_Produit`, `grade_Nutri_Produit`, `id_Categorie`) VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS);
 				insertProduit.setString(1, produit.getNomProduit());
 				insertProduit.setString(2, produit.getGradeNutri());
 				insertProduit.setInt(3, idCategorie);
 				insertProduit.execute();
+				
+				ResultSet result = insertProduit.getGeneratedKeys();
+				if (result.next()) {
+					idProduit = result.getInt(1);
+				}
 			}
 
-			int idProduit = getId_Produit(produit.getNomProduit());
+			if ( idProduit ==-1 ) {
+				idProduit = getId_Produit(produit.getNomProduit());
+			}
 
 			for (Integer idMarque : produit.getListIDsMarques()) {
 				PreparedStatement insertJointure = connection
@@ -90,6 +98,8 @@ public class JDBCdaoProduit {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
+		
+		return idProduit;
 	}
 
 	/**

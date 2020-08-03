@@ -32,17 +32,18 @@ public class TestJeuReduit {
 		Connection connectionDB = ConnectionBDD.getConnection();
 		
 		File fichier = new File(System.getProperty("user.dir") + "/src/main/resources/jeuTest.csv");
-		System.out.println(fichier.canRead());
+		//System.out.println("Fichier lisible =" + fichier.canRead());
 	
 		Chrono chrono = new Chrono();
 		chrono.start(); // démarrage du chrono
+		System.out.println("Lancement Programme");
 		
 		JDBCdaoProduit daoProduit = new JDBCdaoProduit(connectionDB);
 		Datas myDB = new Datas(fichier, connectionDB);
 		
 		 
 		chrono.stop(); // arrêt
-		System.out.println(chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
+		System.out.println("Temps d'execution: " + chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
 		
 		//System.out.println("Test out " + myDB.memoireLocaleIngredientsBDD.toString());
 		
