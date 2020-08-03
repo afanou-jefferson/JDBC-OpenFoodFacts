@@ -2,7 +2,7 @@ package datas;
 
 import java.util.ArrayList;
 
-public class Marque extends InfoProduit{
+public class Marque extends Entite{
 	
 	public String nom_Marque;
 
@@ -29,7 +29,7 @@ public class Marque extends InfoProduit{
 	}
 
 	@Override
-	public String getValeurIdentifiant() {
+	public String getNomUnique() {
 		// TODO Auto-generated method stub
 		return this.nom_Marque;
 	}

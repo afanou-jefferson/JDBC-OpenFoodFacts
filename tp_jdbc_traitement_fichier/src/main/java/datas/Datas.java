@@ -15,31 +15,33 @@ import org.apache.commons.io.FileUtils;
 
 import jdbc.JDBCdaoGenerique;
 import jdbc.JDBCdaoProduit;
+import utils.NettoyageString;
 
 public class Datas {
 
 	Connection connection;
-	int idCategorieProduit;
 
-	ArrayList<Integer> listIDsAdditifs = new ArrayList<Integer>();
-	ArrayList<Integer> listIDsIngredients = new ArrayList<Integer>();
-	ArrayList<Integer> listIDsMarques = new ArrayList<Integer>();
-	ArrayList<Integer> listIDsAllergenes = new ArrayList<Integer>();
+	Categorie categorieDuProduit;
+	ArrayList<Additif> listeAdditifsDuProduit = new ArrayList<Additif>();
+	ArrayList<Ingredient> listeIngredientsDuProduit = new ArrayList<Ingredient>();
+	ArrayList<Marque> listeMarquesDuProduit = new ArrayList<Marque>();
+	ArrayList<Allergene> listeAllergenesDuProduit = new ArrayList<Allergene>();
 
-	HashMap<String, Integer> memoireLocaleAdditifsBDD;
-	HashMap<String, Integer> memoireLocaleIngredientsBDD;
-	HashMap<String, Integer> memoireLocaleMarquesBDD;
-	HashMap<String, Integer> memoireLocaleAllergenesBDD;
-	HashMap<String, Integer> memoireLocaleCategoriesBDD;
-	HashMap<String, Integer> memoireLocaleProduitsBDD;
-	
-	public int compteurCategorie = 1;
-	public int compteurAdditifs = 1;
-	public int compteurIngredients = 1;
-	public int compteurMarques = 1;
-	public int compteurAllergenes = 1;
-	public int compteurProduits = 1;
+	HashMap<String, Entite> memoireLocaleAdditifsBDD;
+	HashMap<String, Entite> memoireLocaleIngredientsBDD;
+	HashMap<String, Entite> memoireLocaleMarquesBDD;
+	HashMap<String, Entite> memoireLocaleAllergenesBDD;
+	HashMap<String, Entite> memoireLocaleCategoriesBDD;
+	HashMap<String, Entite> memoireLocaleProduitsBDD;
 
+	String bufferRequetes = "";
+
+	public int compteurCategorie = 0;
+	public int compteurAdditifs = 0;
+	public int compteurIngredients = 0;
+	public int compteurMarques = 0;
+	public int compteurAllergenes = 0;
+	public int compteurProduits = 0;
 
 	public Datas(File fichier, Connection connection) throws IllegalArgumentException, IllegalAccessException {
 
@@ -54,54 +56,37 @@ public class Datas {
 		this.memoireLocaleAllergenesBDD = daoGenerique.selectAllFromTable(Allergene.class.getSimpleName());
 		this.memoireLocaleCategoriesBDD = daoGenerique.selectAllFromTable(Categorie.class.getSimpleName());
 		this.memoireLocaleProduitsBDD = daoGenerique.selectAllFromTable(Produit.class.getSimpleName());
-		
+
 		try {
 			File file = fichier;
 			List<String> lignes = FileUtils.readLines(file, "UTF-8");
-			
-			//System.out.println("Test in" + this.memoireLocaleIngredientsBDD.toString());
 
 			// Start 1 pour sauter ligne intitules categories
 			for (int i = 1; i < lignes.size(); i++) {
+
 				String[] morceaux = lignes.get(i).split("\\|", -1);
 
-				String nomProduit = nettoyerString(morceaux[2]);
+				String nomProduit = NettoyageString.NettoyageString.nettoyerString(morceaux[2]);
 				String gradeNutriProduit = morceaux[3];
 				int idCategorie = traitementCategorie(morceaux[0]);
-				this.listIDsMarques = traitementMarque(morceaux[1]);
+				this.listeMarquesDuProduit = traitementMarque(morceaux[1]);
 				this.listIDsIngredients = traitementIngredients(morceaux[4]);
 				this.listIDsAllergenes = traitementAllergenes(morceaux[28]);
-				this.listIDsAdditifs = traitementAdditifs(morceaux[29]);
 
-				/*
-				// Gestion donnees Nutritionnelles des indices [5] à [27]
-				DonneesNutritionnelles nutri = new DonneesNutritionnelles();
-				int compteurField = 5;
-				for (Field field : nutri.getClass().getDeclaredFields()) {
-					if (Datas.isANumber(morceaux[compteurField])) {
-						field.set(nutri, Double.parseDouble(morceaux[compteurField]));
-					} else {
-						field.set(nutri, -1); // Val par défaut quand info non présente
-					}
-					compteurField++;
-				} */
-
-				//Categorie categorieProduit = new Categorie(daoGenerique.getNomFromID(idCategorie, new Categorie()));
 				Produit newProduit = new Produit(idCategorie, listIDsMarques, nomProduit, gradeNutriProduit,
 						listIDsIngredients, listIDsAllergenes, listIDsAdditifs);
-				
-				String cleanNomProduit = nettoyerString(nomProduit.toLowerCase());
 
-				
-				if ( memoireLocaleProduitsBDD.get(cleanNomProduit) == null ) {
+				String cleanNomProduit = NettoyageString.nettoyerString(nomProduit.toLowerCase());
+
+				if (memoireLocaleProduitsBDD.get(cleanNomProduit) == null) {
 					System.out.println("Produit buggé :" + nomProduit);
 					int idNewProduit = daoProduit.insert(newProduit);
 					memoireLocaleProduitsBDD.put(cleanNomProduit, idNewProduit);
 					compteurProduits++;
 				}
 
+				System.out.println(i);
 
-				//System.out.println(i);
 			}
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -110,35 +95,33 @@ public class Datas {
 	}
 
 	private ArrayList<Integer> traitementAdditifs(String morceauString) {
+		
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connection);
-		String[] elemStringAdditif = morceauString.split(",");
-		ArrayList<Integer> listIDAdditifsProduit = new ArrayList<Integer>();
-
+		String[] elemStringAdditif = morceauString.split(","); ArrayList<Integer>
+		listIDAdditifsProduit = new ArrayList<Integer>();
+		
 		for (String nomAdditif : elemStringAdditif) {
-
-			// Nettoyage spécial
-			String cleanAdditif = nomAdditif.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
-					.replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").trim();
-
-			Additif additifEnLecture = new Additif("");
-
-			if (cleanAdditif.equals("")) {
-				additifEnLecture = new Additif("ERREUR");
-			} else {
-				additifEnLecture = new Additif(cleanAdditif);
-			}
-
-			if (memoireLocaleAdditifsBDD.get(nettoyerString(additifEnLecture.getLibelleAdditif())) == null) {
-
-				int idAdditifBDD = daoGenerique.insert(additifEnLecture);
-				this.memoireLocaleAdditifsBDD.put(additifEnLecture.nom_Additif, idAdditifBDD);
-
-				listIDAdditifsProduit.add(idAdditifBDD);
-				this.compteurAdditifs++;
-			}
+		
+		// Nettoyage spécial 
+		String cleanAdditif = nomAdditif.replaceAll("[^\\w]\\s",
+		" ").replaceAll("[\\+\\.\\^,%]", " ") .replaceAll("[\\_\\-]",
+		" ").replace("fr:", " ").replace("en:", " ").trim();
+		
+		Additif additifEnLecture = new Additif("");
+		
+		if (cleanAdditif.equals("")) { additifEnLecture = new Additif("ERREUR"); }
+		else { additifEnLecture = new Additif(cleanAdditif); }
+		
+		if (memoireLocaleAdditifsBDD.get(NettoyageString.nettoyerString(additifEnLecture.
+		getLibelleAdditif())) == null) {
+		
+		int idAdditifBDD = daoGenerique.insert(additifEnLecture);
+		this.memoireLocaleAdditifsBDD.put(additifEnLecture.nom_Additif,additifEnLecture);
+		
+		listIDAdditifsProduit.add(idAdditifBDD); this.compteurAdditifs++; } 
+		} 
+		return listIDAdditifsProduit; 
 		}
-		return listIDAdditifsProduit;
-	}
 
 	private ArrayList<Integer> traitementAllergenes(String morceauString) {
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connection);
@@ -147,7 +130,7 @@ public class Datas {
 
 		for (String nomAllergene : elemStringAllergene) {
 
-			String cleanAllergene = nettoyerString(nomAllergene);
+			String cleanAllergene = NettoyageString.nettoyerString(nomAllergene);
 
 			Allergene allergeneEnLecture = new Allergene("");
 
@@ -157,7 +140,8 @@ public class Datas {
 				allergeneEnLecture = new Allergene(cleanAllergene);
 			}
 
-			if (memoireLocaleAllergenesBDD.get(nettoyerString(allergeneEnLecture.getLibelleAllergene())) == null) {
+			if (memoireLocaleAllergenesBDD
+					.get(NettoyageString.nettoyerString(allergeneEnLecture.getLibelleAllergene())) == null) {
 
 				int idAllergeneBDD = daoGenerique.insert(allergeneEnLecture);
 				this.memoireLocaleAllergenesBDD.put(allergeneEnLecture.getLibelleAllergene(), idAllergeneBDD);
@@ -173,7 +157,7 @@ public class Datas {
 
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connection);
 
-		String cleanCategorie = nettoyerString(morceauString);
+		String cleanCategorie = NettoyageString.nettoyerString(morceauString);
 
 		Categorie categorieEnLecture = new Categorie("");
 
@@ -185,12 +169,14 @@ public class Datas {
 
 		int idCategorieBDD = 0;
 
-		if (memoireLocaleCategoriesBDD.get(nettoyerString(categorieEnLecture.getNomCategorie())) == null) {
+		if (memoireLocaleCategoriesBDD
+				.get(NettoyageString.nettoyerString(categorieEnLecture.getNomCategorie())) == null) {
 			idCategorieBDD = daoGenerique.insert(categorieEnLecture);
 			this.memoireLocaleAdditifsBDD.put(categorieEnLecture.getNomCategorie(), idCategorieBDD);
 			this.compteurCategorie++;
 		} else {
-			idCategorieBDD = memoireLocaleCategoriesBDD.get(nettoyerString(categorieEnLecture.getNomCategorie()));
+			idCategorieBDD = memoireLocaleCategoriesBDD
+					.get(NettoyageString.nettoyerString(categorieEnLecture.getNomCategorie()));
 		}
 		return idCategorieBDD;
 	}
@@ -203,7 +189,7 @@ public class Datas {
 
 		for (String nomMarque : elemStringMarque) {
 
-			String cleanMarque = nettoyerString(nomMarque);
+			String cleanMarque = NettoyageString.nettoyerString(nomMarque);
 
 			Marque marqueEnLecture = new Marque("");
 
@@ -213,10 +199,11 @@ public class Datas {
 				marqueEnLecture = new Marque(cleanMarque);
 			}
 
-			// String nomMarqueFromBDD =
-			// daoGenerique.selectRowLike(marqueEnLecture).getNom_Row();
+			// String nomMarqueFromBDD = //
+			daoGenerique.selectRowLike(marqueEnLecture).getNom_Row();
 
-			if (memoireLocaleMarquesBDD.get(nettoyerString(marqueEnLecture.getNomMarque().toLowerCase())) == null) {
+			if (memoireLocaleMarquesBDD
+					.get(NettoyageString.nettoyerString(marqueEnLecture.getNomMarque().toLowerCase())) == null) {
 
 				int idMarqueBDD = daoGenerique.insert(marqueEnLecture);
 				this.memoireLocaleMarquesBDD.put(marqueEnLecture.getNomMarque(), idMarqueBDD);
@@ -236,14 +223,15 @@ public class Datas {
 
 		for (String nomIngredient : elemStringIngredient) {
 
-			String cleanIngredient = nettoyerString(nomIngredient);
-		
+			String cleanIngredient = NettoyageString.NettoyageString.nettoyerString(nomIngredient);
+
 			Ingredient ingredientEnLecture = new Ingredient(cleanIngredient);
 
-			if (memoireLocaleIngredientsBDD.get(nettoyerString(ingredientEnLecture.getLibelleIngredient())) == null) {
-				
+			if (memoireLocaleIngredientsBDD.get(NettoyageString.NettoyageString
+					.nettoyerString(ingredientEnLecture.getLibelleIngredient())) == null) {
+
 				int idIngredientBDD = daoGenerique.insert(ingredientEnLecture);
-				//System.out.println("Test");
+				// System.out.println("Test");
 				this.memoireLocaleIngredientsBDD.put(ingredientEnLecture.nom_Ingredient, idIngredientBDD);
 				listIDIngredientsProduit.add(idIngredientBDD);
 				this.compteurIngredients++;
@@ -252,102 +240,4 @@ public class Datas {
 		return listIDIngredientsProduit;
 	}
 
-	public static boolean isANumber(String chaine) {
-		try {
-			Integer.parseInt(chaine);
-			return true;
-		} catch (NumberFormatException nfe) {
-			return false;
-		}
-	}
-	
-	
-	public static String removeAccents(String value)
-	{
-		HashMap<Character, Character> MAP_NORM = null;
-	    if (MAP_NORM == null || MAP_NORM.size() == 0)
-	    {
-	        MAP_NORM = new HashMap<Character, Character>();
-	        MAP_NORM.put('À', 'A');
-	        MAP_NORM.put('Á', 'A');
-	        MAP_NORM.put('Â', 'A');
-	        MAP_NORM.put('Ã', 'A');
-	        MAP_NORM.put('Ä', 'A');
-	        MAP_NORM.put('È', 'E');
-	        MAP_NORM.put('É', 'E');
-	        MAP_NORM.put('Ê', 'E');
-	        MAP_NORM.put('Ë', 'E');
-	        MAP_NORM.put('Í', 'I');
-	        MAP_NORM.put('Ì', 'I');
-	        MAP_NORM.put('Î', 'I');
-	        MAP_NORM.put('Ï', 'I');
-	        MAP_NORM.put('Ù', 'U');
-	        MAP_NORM.put('Ú', 'U');
-	        MAP_NORM.put('Û', 'U');
-	        MAP_NORM.put('Ü', 'U');
-	        MAP_NORM.put('Ò', 'O');
-	        MAP_NORM.put('Ó', 'O');
-	        MAP_NORM.put('Ô', 'O');
-	        MAP_NORM.put('Õ', 'O');
-	        MAP_NORM.put('Ö', 'O');
-	        MAP_NORM.put('Ñ', 'N');
-	        MAP_NORM.put('Ç', 'C');
-	        MAP_NORM.put('ª', 'A');
-	        MAP_NORM.put('º', 'O');
-	        MAP_NORM.put('§', 'S');
-	        MAP_NORM.put('³', '3');
-	        MAP_NORM.put('²', '2');
-	        MAP_NORM.put('¹', '1');
-	        MAP_NORM.put('à', 'a');
-	        MAP_NORM.put('á', 'a');
-	        MAP_NORM.put('â', 'a');
-	        MAP_NORM.put('ã', 'a');
-	        MAP_NORM.put('ä', 'a');
-	        MAP_NORM.put('è', 'e');
-	        MAP_NORM.put('é', 'e');
-	        MAP_NORM.put('ê', 'e');
-	        MAP_NORM.put('ë', 'e');
-	        MAP_NORM.put('í', 'i');
-	        MAP_NORM.put('ì', 'i');
-	        MAP_NORM.put('î', 'i');
-	        MAP_NORM.put('ï', 'i');
-	        MAP_NORM.put('ù', 'u');
-	        MAP_NORM.put('ú', 'u');
-	        MAP_NORM.put('û', 'u');
-	        MAP_NORM.put('ü', 'u');
-	        MAP_NORM.put('ò', 'o');
-	        MAP_NORM.put('ó', 'o');
-	        MAP_NORM.put('ô', 'o');
-	        MAP_NORM.put('õ', 'o');
-	        MAP_NORM.put('ö', 'o');
-	        MAP_NORM.put('ñ', 'n');
-	        MAP_NORM.put('ç', 'c');
-	    }
-
-	    if (value == null) {
-	        return "";
-	    }
-
-	    StringBuilder sb = new StringBuilder(value);
-
-	    for(int i = 0; i < value.length(); i++) {
-	        Character c = MAP_NORM.get(sb.charAt(i));
-	        if(c != null) {
-	            sb.setCharAt(i, c.charValue());
-	        }
-	    }
-
-	    return sb.toString();
-
-	}
-
-	public static String nettoyerString(String rawString) {
-		
-		//String cleanString = Normalizer.normalize(rawString, Normalizer.Form.NFD);
-		
-		String cleanString = rawString.replaceAll("[^\\w]\\s", " ").replaceAll("[\\+\\.\\^,*%]", " ")
-				.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ").toLowerCase().trim();
-		cleanString = removeAccents(cleanString);
-		return cleanString;
-	}
-}
+}}

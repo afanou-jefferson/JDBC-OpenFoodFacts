@@ -2,7 +2,7 @@ package datas;
 
 import java.util.ArrayList;
 
-public class Additif extends InfoProduit{
+public class Additif extends Entite{
 	
 	public String nom_Additif;
 
@@ -26,7 +26,7 @@ public class Additif extends InfoProduit{
 
 
 	@Override
-	public String getValeurIdentifiant() {
+	public String getNomUnique() {
 		// TODO Auto-generated method stub
 		return this.nom_Additif;
 	}

@@ -12,11 +12,17 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import datas.Additif;
+import datas.Allergene;
+import datas.Categorie;
 import datas.CustomRow;
 import datas.Datas;
-import datas.InfoProduit;
+import datas.Entite;
+import datas.Ingredient;
+import datas.Marque;
 import exceptions.TraitementFichierException;
 import utils.ConnectionBDD;
+import utils.NettoyageString;
 
 public class JDBCdaoGenerique {
 
@@ -35,11 +41,11 @@ public class JDBCdaoGenerique {
 	 * Insert l'Objet héritant d'InfoProduit placée en paramètre si elle n'est pas déjà enregistrée
 	 * dans la BDD
 	 * 
-	 * @param InfoProduit
+	 * @param Entite
 	 * @return l'ID de la row inserrée si effecutée ou bien l'id de la row existante
 	 *         si doublon
 	 **/
-	public int insert(InfoProduit model) {
+	public int insert(Entite model) {
 
 		int idRow = 0;
 		try {
@@ -76,7 +82,7 @@ public class JDBCdaoGenerique {
 		return idRow;
 	}
 
-	public CustomRow selectRowLike(InfoProduit model) {
+	public CustomRow selectRowLike(Entite model) {
 
 		CustomRow infosRow = new CustomRow();
 
@@ -85,7 +91,7 @@ public class JDBCdaoGenerique {
 			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
 					.append(model.getNomModel()).append(" = ?");
 			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
-			selectWhereString.setString(1, model.getValeurIdentifiant());
+			selectWhereString.setString(1, model.getNomUnique());
 			ResultSet result = selectWhereString.executeQuery();
 			if (result.next()) {
 				infosRow.setId_Row(result.getInt(1));
@@ -99,7 +105,7 @@ public class JDBCdaoGenerique {
 		return infosRow;
 	}
 
-	public int selectIDRowLike(InfoProduit model) {
+	public int selectIDRowLike(Entite model) {
 
 		int idRowAlike = -1;
 
@@ -111,7 +117,7 @@ public class JDBCdaoGenerique {
 						.append(model.getNomModel())
 						.append(" = ?");
 			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
-			selectWhereString.setString(1, model.getValeurIdentifiant());
+			selectWhereString.setString(1, model.getNomUnique());
 			ResultSet result = selectWhereString.executeQuery();
 			if (result.next()) {
 				idRowAlike = result.getInt(1);
@@ -122,7 +128,7 @@ public class JDBCdaoGenerique {
 		return idRowAlike;
 	}
 
-	public String nbAttributsToFormatSQL(InfoProduit model) {
+	public String nbAttributsToFormatSQL(Entite model) {
 		String nbAttributsToFormatSQL = "(";
 		for (int i = 1; i <= model.getNbAttributsModel(); i++) {
 			nbAttributsToFormatSQL += "?,";
@@ -134,7 +140,7 @@ public class JDBCdaoGenerique {
 		return nbAttributsToFormatSQL;
 	}
 
-	public String attributsToFormatSQL(InfoProduit model) {
+	public String attributsToFormatSQL(Entite model) {
 
 		String stringAttributs = "(";
 
@@ -146,7 +152,7 @@ public class JDBCdaoGenerique {
 		return stringAttributs;
 	}
 
-	public String getNomFromID(int idACherche, InfoProduit model) {
+	public String getNomFromID(int idACherche, Entite model) {
 		String nomRow = "ROW INNEXISTANT";
 
 		try {
@@ -176,7 +182,7 @@ public class JDBCdaoGenerique {
 	 * @param nomEntite
 	 * @return Retourne l'id_Cat en BDD de la Entite dont le nom est égal au param
 	 */
-	public int getIDFromNom(String nomAChercher, InfoProduit model) {
+	public int getIDFromNom(String nomAChercher, Entite model) {
 
 		int idRow = -1;
 		try {
@@ -187,7 +193,7 @@ public class JDBCdaoGenerique {
 						.append(model.getNomModel())
 						.append(" = ?");
 			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
-			selectWhereString.setString(1, model.getValeurIdentifiant());
+			selectWhereString.setString(1, model.getNomUnique());
 			ResultSet result = selectWhereString.executeQuery();
 
 			// System.out.println( "Test controller.getIdFromNom : " +
@@ -203,7 +209,7 @@ public class JDBCdaoGenerique {
 		return idRow;
 	}
 
-	public boolean rowDejaExistant(String stringAChercher, InfoProduit model) {
+	public boolean rowDejaExistant(String stringAChercher, Entite model) {
 		boolean bool = false;
 		if (getIDFromNom(stringAChercher, model) != 0) {
 			bool = true;
@@ -211,9 +217,9 @@ public class JDBCdaoGenerique {
 		return bool;
 	}
 
-	public HashMap<String,Integer> selectAllFromTable(String nomTable) {
+	public HashMap<String,Entite> selectAllFromTable(String nomTable) {
 		
-		HashMap<String,Integer> tableExistanteEnBDD = new HashMap<String,Integer>();
+		HashMap<String,Entite> tableExistanteEnBDD = new HashMap<String,Entite>();
 		
 		String query = "SELECT * FROM "+ nomTable;
 		
@@ -222,8 +228,25 @@ public class JDBCdaoGenerique {
 			//System.out.println(selectTable.toString());
 			ResultSet result =  selectTable.executeQuery();
 			
-			while ( result.next() ) {
-				tableExistanteEnBDD.put( Datas.nettoyerString(result.getString(2)), result.getInt(1));
+			while (result.next()) {
+				
+				switch (nomTable) {
+				case "Additif" :
+					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Additif(result.getString(2)));
+					break;
+				case "Allergene" :
+					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Allergene(result.getString(2)));
+					break;
+				case "Categorie" : 
+					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Categorie(result.getString(2)));
+					break;
+				case "Ingredient" :
+					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Ingredient(result.getString(2)));
+					break;
+				case "Marque" : 
+					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Marque(result.getString(2)));
+					break;
+				}
 			}
 			
 		return tableExistanteEnBDD;	

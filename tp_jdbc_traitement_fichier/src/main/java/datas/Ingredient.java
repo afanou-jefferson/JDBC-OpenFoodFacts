@@ -3,7 +3,7 @@ package datas;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Ingredient extends InfoProduit {
+public class Ingredient extends Entite {
 
 	public String nom_Ingredient;
 
@@ -30,7 +30,7 @@ public class Ingredient extends InfoProduit {
 	}
 
 	@Override
-	public String getValeurIdentifiant() {
+	public String getNomUnique() {
 		// TODO Auto-generated method stub
 		return this.nom_Ingredient;
 	}

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
-import datas.InfoProduit;
+import datas.Entite;
 import datas.Marque;
 
 public class CheckStringSimilaire {
@@ -53,8 +53,8 @@ public class CheckStringSimilaire {
 		boolean bool = false;
 
 		for (int i = 0; i < list.size(); i++) {
-			InfoProduit tempo = (InfoProduit) list.get(i);
-			if (stringSimilaires(paramString, tempo.getValeurIdentifiant(), seuilMinDifferences)) {
+			Entite tempo = (Entite) list.get(i);
+			if (stringSimilaires(paramString, tempo.getNomUnique(), seuilMinDifferences)) {
 				bool = true;
 			}
 		}

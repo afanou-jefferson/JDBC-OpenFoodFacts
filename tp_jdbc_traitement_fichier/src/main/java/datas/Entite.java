@@ -8,7 +8,9 @@ import java.util.ArrayList;
  * @author Exost
  *
  */
-public abstract class InfoProduit {
+public abstract class Entite {
+	
+	String nomClasse = getNomModel();
 	
 	public String getNomModel() {
 		String nomModel = this.getClass().getSimpleName();	
@@ -29,7 +31,7 @@ public abstract class InfoProduit {
 	
 	public abstract ArrayList<String> getValeurAttributsModel();
 	
-	public abstract String getValeurIdentifiant();
+	public abstract String getNomUnique();
 	
 
 }

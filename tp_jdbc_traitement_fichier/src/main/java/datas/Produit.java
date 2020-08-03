@@ -1,33 +1,34 @@
 package datas;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import utils.ArrayListToString;
+public class Produit extends Entite {
 
-public class Produit {
-
-	private int idCategorie;
-	private ArrayList<Integer> listIDsMarques;
 	private String NomProduit;
 	private String gradeNutri;
+	private int idCategorie;
+	
+	private ArrayList<Integer> listIDsMarques;
 	// private DonneesNutritionnelles donneesNutri;
 	private ArrayList<Integer> listIDsIngredients;
 	private ArrayList<Integer> listIDsAllergenes;
 	private ArrayList<Integer> listIDsAdditifs;
 
-	public Produit(int idCategorie, ArrayList<Integer> listIDsMarques, String nomProduit, String gradeNutri,
+
+	public Produit(String nomProduit, String gradeNutri, int idCategorie, ArrayList<Integer> listIDsMarques,
 			ArrayList<Integer> listIDsIngredients, ArrayList<Integer> listIDsAllergenes,
 			ArrayList<Integer> listIDsAdditifs) {
 		super();
-		this.idCategorie = idCategorie;
-		this.listIDsMarques = listIDsMarques;
 		NomProduit = nomProduit;
 		this.gradeNutri = gradeNutri;
+		this.idCategorie = idCategorie;
+		this.listIDsMarques = listIDsMarques;
 		this.listIDsIngredients = listIDsIngredients;
 		this.listIDsAllergenes = listIDsAllergenes;
 		this.listIDsAdditifs = listIDsAdditifs;
 	}
-	
+
 
 	public int getIdCategorie() {
 		return idCategorie;
@@ -85,6 +86,27 @@ public class Produit {
 
 	public void setListIDsAdditifs(ArrayList<Integer> listIDsAdditifs) {
 		this.listIDsAdditifs = listIDsAdditifs;
+	}
+
+
+	@Override
+	public ArrayList<String> getValeurAttributsModel() {
+		// TODO Auto-generated method stub
+		ArrayList<String> valeursAttributs = new ArrayList<>();
+		
+		valeursAttributs.add(this.NomProduit);
+		valeursAttributs.add(this.gradeNutri);
+		valeursAttributs.add(Integer.toString(this.idCategorie));
+		
+		return valeursAttributs;
+		
+	}
+
+
+	@Override
+	public String getNomUnique() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
