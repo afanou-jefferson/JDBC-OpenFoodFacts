@@ -40,65 +40,67 @@ public class JDBCdaoProduit {
 			// On check déjà que la catégorie est présente pour respecter la contrainte de
 			// clé étrangère
 
-			//int idCategorie = daoGenerique.getIDFromNom(produit.getCategorie().getNomCategorie(),produit.getCategorie());
+			// int idCategorie =
+			// daoGenerique.getIDFromNom(produit.getCategorie().getNomCategorie(),produit.getCategorie());
 
-			//if (!produitDejaExistant(produit.getNomProduit())) {
+			if (!produitDejaExistant(produit.getNomProduit())) {
+
 				PreparedStatement insertProduit = connection.prepareStatement(
-						"INSERT INTO `produit`(`nom_Produit`, `grade_Nutri_Produit`, `id_Categorie`) VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS);
-				insertProduit.setString(1, produit.getNomProduit());
-				insertProduit.setString(2, produit.getGradeNutri());
-				insertProduit.setInt(3, produit.getIdCategorie());
+						"INSERT INTO `produit`(`id_Produit`, `nom_Produit`, `grade_Nutri_Produit`, `id_Categorie`) VALUES (?,?,?,?)",
+						Statement.RETURN_GENERATED_KEYS);
+				insertProduit.setInt(1, Produit.compteurIDProduit + 1);
+				insertProduit.setString(2, produit.getNomProduit());
+				insertProduit.setString(3, produit.getGradeNutri());
+				insertProduit.setInt(4, produit.getIdCategorie());
 				insertProduit.execute();
-				
-				ResultSet result = insertProduit.getGeneratedKeys();
-				if (result.next()) {
-					idProduit = result.getInt(1);
+				Produit.compteurIDProduit++;
+
+				/*
+				 * ResultSet result = insertProduit.getGeneratedKeys(); if (result.next()) {
+				 * idProduit = result.getInt(1); Produit.compteurIDProduit++; } }
+				 * 
+				 * // Si l'insert renvoit -1, cad pas d'insert effectif /*if ( idProduit ==-1 )
+				 * { idProduit = getId_Produit(produit.getNomProduit()); }
+				 */
+
+				for (Marque marque : produit.getListeMarquesDuProduit()) {
+					PreparedStatement insertJointure = connection.prepareStatement(
+							"INSERT INTO `jointure_prod_marque`(`id_produit`, `id_Marque`) VALUES (?,?)");
+					insertJointure.setInt(1, idProduit);
+					insertJointure.setInt(2, marque.getIdEnBDD());
+					insertJointure.execute();
 				}
-			//}
 
-			// Si l'insert renvoit -1, cad pas d'insert effectif
-			if ( idProduit ==-1 ) {
-				idProduit = getId_Produit(produit.getNomProduit());
+				for (Ingredient ingredient : produit.getListeIngredientsDuProduit()) {
+					PreparedStatement insertJointure = connection.prepareStatement(
+							"INSERT INTO `jointure_prod_ingredient`(`id_produit`, `id_Ingredient`) VALUES (?,?)");
+					insertJointure.setInt(1, idProduit);
+					insertJointure.setInt(2, ingredient.getIdEnBDD());
+					insertJointure.execute();
+
+				}
+
+				for (Allergene allergene : produit.getListeAllergenesDuProduit()) {
+					PreparedStatement insertJointure = connection.prepareStatement(
+							"INSERT INTO `jointure_prod_allergene`(`id_produit`, `id_Allergene`) VALUES (?,?)");
+					insertJointure.setInt(1, idProduit);
+					insertJointure.setInt(2, allergene.getIdEnBDD());
+					insertJointure.execute();
+				}
+
+				for (Additif additif : produit.getListeAdditifsDuProduit()) {
+					PreparedStatement insertJointure = connection.prepareStatement(
+							"INSERT INTO `jointure_prod_additif`(`id_produit`, `id_Additif`) VALUES (?,?)");
+					insertJointure.setInt(1, idProduit);
+					insertJointure.setInt(2, additif.getIdEnBDD());
+					insertJointure.execute();
+				}
 			}
-
-			for (Integer idMarque : produit.getListIDsMarques()) {
-				PreparedStatement insertJointure = connection
-						.prepareStatement("INSERT INTO `jointure_prod_marque`(`id_produit`, `id_Marque`) VALUES (?,?)");
-				insertJointure.setInt(1, idProduit);
-				insertJointure.setInt(2, idMarque);
-				insertJointure.execute();
-			}
-
-			for (Integer idIngredient : produit.getListIDsIngredients()) {
-				PreparedStatement insertJointure = connection.prepareStatement(
-						"INSERT INTO `jointure_prod_ingredient`(`id_produit`, `id_Ingredient`) VALUES (?,?)");
-				insertJointure.setInt(1, idProduit);
-				insertJointure.setInt(2, idIngredient);
-				insertJointure.execute();
-
-			}
-
-			for (Integer idAllergene : produit.getListIDsAllergenes()) {
-				PreparedStatement insertJointure = connection.prepareStatement(
-						"INSERT INTO `jointure_prod_allergene`(`id_produit`, `id_Allergene`) VALUES (?,?)");
-				insertJointure.setInt(1, idProduit);
-				insertJointure.setInt(2, idAllergene);
-				insertJointure.execute();
-			}
-
-			for (Integer idAdditif : produit.getListIDsAdditifs()) {
-				PreparedStatement insertJointure = connection.prepareStatement(
-						"INSERT INTO `jointure_prod_additif`(`id_produit`, `id_Additif`) VALUES (?,?)");
-				insertJointure.setInt(1, idProduit);
-				insertJointure.setInt(2, idAdditif);
-				insertJointure.execute();
-			}
-
 		} catch (SQLException e) {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
-		
+
 		return idProduit;
 	}
 

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 public class Categorie extends Entite{ 
 	
-	public String nom_Categorie;
+	public static int compteurIDCategorie;
+	
+	private String nom_Categorie;
 
 	public Categorie(String nomCategorie) {
 		super();

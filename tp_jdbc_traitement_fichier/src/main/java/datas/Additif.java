@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 public class Additif extends Entite{
 	
-	public String nom_Additif;
+	public static int compteurIDAdditif;
+	
+	private String nom_Additif;
 
 	public Additif(String nomAdditif) {
 		super();

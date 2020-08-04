@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 public class Marque extends Entite{
 	
-	public String nom_Marque;
+	public static int compteurIDMarque;
+	
+	private String nom_Marque;
 
 	public Marque(String nomMarque) {
 		super();

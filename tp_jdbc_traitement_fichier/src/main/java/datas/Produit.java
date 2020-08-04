@@ -5,29 +5,62 @@ import java.util.ArrayList;
 
 public class Produit extends Entite {
 
+	public static int compteurIDProduit;
+	
 	private String NomProduit;
 	private String gradeNutri;
 	private int idCategorie;
 	
-	private ArrayList<Integer> listIDsMarques;
-	// private DonneesNutritionnelles donneesNutri;
-	private ArrayList<Integer> listIDsIngredients;
-	private ArrayList<Integer> listIDsAllergenes;
-	private ArrayList<Integer> listIDsAdditifs;
+	ArrayList<Additif> listeAdditifsDuProduit = new ArrayList<Additif>();
+	ArrayList<Ingredient> listeIngredientsDuProduit = new ArrayList<Ingredient>();
+	ArrayList<Marque> listeMarquesDuProduit = new ArrayList<Marque>();
+	ArrayList<Allergene> listeAllergenesDuProduit = new ArrayList<Allergene>();
 
 
-	public Produit(String nomProduit, String gradeNutri, int idCategorie, ArrayList<Integer> listIDsMarques,
-			ArrayList<Integer> listIDsIngredients, ArrayList<Integer> listIDsAllergenes,
-			ArrayList<Integer> listIDsAdditifs) {
+
+
+	public Produit(String nomProduit, String gradeNutri, int idCategorie, ArrayList<Additif> listeAdditifsDuProduit,
+			ArrayList<Ingredient> listeIngredientsDuProduit, ArrayList<Marque> listeMarquesDuProduit,
+			ArrayList<Allergene> listeAllergenesDuProduit) {
 		super();
 		NomProduit = nomProduit;
 		this.gradeNutri = gradeNutri;
 		this.idCategorie = idCategorie;
-		this.listIDsMarques = listIDsMarques;
-		this.listIDsIngredients = listIDsIngredients;
-		this.listIDsAllergenes = listIDsAllergenes;
-		this.listIDsAdditifs = listIDsAdditifs;
+		this.listeAdditifsDuProduit = listeAdditifsDuProduit;
+		this.listeIngredientsDuProduit = listeIngredientsDuProduit;
+		this.listeMarquesDuProduit = listeMarquesDuProduit;
+		this.listeAllergenesDuProduit = listeAllergenesDuProduit;
 	}
+
+
+	
+
+	public String getNomProduit() {
+		return NomProduit;
+	}
+
+
+
+
+	public void setNomProduit(String nomProduit) {
+		NomProduit = nomProduit;
+	}
+
+
+
+
+	public String getGradeNutri() {
+		return gradeNutri;
+	}
+
+
+
+
+	public void setGradeNutri(String gradeNutri) {
+		this.gradeNutri = gradeNutri;
+	}
+
+
 
 
 	public int getIdCategorie() {
@@ -35,58 +68,69 @@ public class Produit extends Entite {
 	}
 
 
+
+
 	public void setIdCategorie(int idCategorie) {
 		this.idCategorie = idCategorie;
 	}
 
 
-	public ArrayList<Integer> getListIDsIngredients() {
-		return listIDsIngredients;
+
+
+	public ArrayList<Additif> getListeAdditifsDuProduit() {
+		return listeAdditifsDuProduit;
 	}
 
-	public ArrayList<Integer> getListIDsMarques() {
-		return listIDsMarques;
+
+
+
+	public void setListeAdditifsDuProduit(ArrayList<Additif> listeAdditifsDuProduit) {
+		this.listeAdditifsDuProduit = listeAdditifsDuProduit;
 	}
 
-	public void setListIDsMarques(ArrayList<Integer> listIDsMarques) {
-		this.listIDsMarques = listIDsMarques;
+
+
+
+	public ArrayList<Ingredient> getListeIngredientsDuProduit() {
+		return listeIngredientsDuProduit;
 	}
 
-	public String getNomProduit() {
-		return NomProduit;
+
+
+
+	public void setListeIngredientsDuProduit(ArrayList<Ingredient> listeIngredientsDuProduit) {
+		this.listeIngredientsDuProduit = listeIngredientsDuProduit;
 	}
 
-	public void setNomProduit(String nomProduit) {
-		NomProduit = nomProduit;
+
+
+
+	public ArrayList<Marque> getListeMarquesDuProduit() {
+		return listeMarquesDuProduit;
 	}
 
-	public String getGradeNutri() {
-		return gradeNutri;
+
+
+
+	public void setListeMarquesDuProduit(ArrayList<Marque> listeMarquesDuProduit) {
+		this.listeMarquesDuProduit = listeMarquesDuProduit;
 	}
 
-	public void setGradeNutri(String gradeNutri) {
-		this.gradeNutri = gradeNutri;
+
+
+
+	public ArrayList<Allergene> getListeAllergenesDuProduit() {
+		return listeAllergenesDuProduit;
 	}
 
-	public void setListIDsIngredients(ArrayList<Integer> listIDsIngredients) {
-		this.listIDsIngredients = listIDsIngredients;
+
+
+
+	public void setListeAllergenesDuProduit(ArrayList<Allergene> listeAllergenesDuProduit) {
+		this.listeAllergenesDuProduit = listeAllergenesDuProduit;
 	}
 
-	public ArrayList<Integer> getListIDsAllergenes() {
-		return listIDsAllergenes;
-	}
 
-	public void setListIDsAllergenes(ArrayList<Integer> listIDsAllergenes) {
-		this.listIDsAllergenes = listIDsAllergenes;
-	}
-
-	public ArrayList<Integer> getListIDsAdditifs() {
-		return listIDsAdditifs;
-	}
-
-	public void setListIDsAdditifs(ArrayList<Integer> listIDsAdditifs) {
-		this.listIDsAdditifs = listIDsAdditifs;
-	}
 
 
 	@Override

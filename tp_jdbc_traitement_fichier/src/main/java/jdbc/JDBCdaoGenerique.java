@@ -1,7 +1,5 @@
 package jdbc;
 
-import java.awt.List;
-import java.lang.ProcessHandle.Info;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,19 +7,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
+
 import java.util.logging.Logger;
 
 import datas.Additif;
 import datas.Allergene;
 import datas.Categorie;
 import datas.CustomRow;
-import datas.Datas;
+
 import datas.Entite;
 import datas.Ingredient;
 import datas.Marque;
 import exceptions.TraitementFichierException;
-import utils.ConnectionBDD;
 import utils.NettoyageString;
 
 public class JDBCdaoGenerique {
@@ -38,48 +35,56 @@ public class JDBCdaoGenerique {
 	}
 
 	/**
-	 * Insert l'Objet héritant d'InfoProduit placée en paramètre si elle n'est pas déjà enregistrée
-	 * dans la BDD
+	 * Insert l'Objet héritant d'InfoProduit placée en paramètre si elle n'est pas
+	 * déjà enregistrée dans la BDD
 	 * 
 	 * @param Entite
 	 * @return l'ID de la row inserrée si effecutée ou bien l'id de la row existante
 	 *         si doublon
 	 **/
-	public int insert(Entite model) {
+	public String insert(Entite model) {
 
-		int idRow = 0;
+		String query = "";
 		try {
-				int alikeID = selectIDRowLike(model);
-				if (alikeID != -1) { // Si différent de -1 alors on a un enregistrement similaire donc on passe et on renvoit cet ID
-					idRow = alikeID;
-				} else { // Sinon insert classique
-					StringBuilder builtString = new StringBuilder();
-					builtString.append("INSERT INTO ")
-							.append(model.getNomModel())
-							.append(" " + attributsToFormatSQL(model) + " ")
-							.append(" VALUES ")
-							.append(nbAttributsToFormatSQL(model));
+//			int alikeID = selectIDRowLike(model);
+//			if (alikeID != -1) { // Si différent de -1 alors on a un enregistrement similaire donc on passe et on
+//									// renvoit cet ID
+//				idRow = alikeID;
+//			} else { // Sinon insert classique
+			StringBuilder builtString = new StringBuilder();
+			builtString.append("INSERT INTO ").append(model.getNomModel())
+					.append(" " + attributsToFormatSQL(model) + " ").append(" VALUES ")
+					.append(nbAttributsToFormatSQL(model) + ";");
 
-					PreparedStatement insert = connection.prepareStatement(builtString.toString(),
-							Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement insert = connection.prepareStatement(builtString.toString(),
+					Statement.RETURN_GENERATED_KEYS);
 
-					for (int i = 1; i <= model.getNbAttributsModel(); i++) {
-						insert.setString(i, model.getValeurAttributsModel().get(i - 1));
-					}
-				
-					//System.out.println(insert.toString());
-					insert.execute();
-					
-					ResultSet result = insert.getGeneratedKeys();
-					if (result.next()) {
-						idRow = result.getInt(1);
-					}
-				}
+			for (int i = 1; i <= model.getNbAttributsModel(); i++) {
+				insert.setString(i, model.getValeurAttributsModel().get(i - 1));
+			}
+
+			query = insert.toString();
+			// System.out.println(insert.toString());
+			// insert.execute();
+
+			// }
 		} catch (SQLException e) {
 			// transformer SQLException en ComptaException
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
-		return idRow;
+		return query;
+	}
+
+	public void insertAll(String buffedQuery) {
+
+		try {
+			PreparedStatement insert = connection.prepareStatement(buffedQuery);
+			insert.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public CustomRow selectRowLike(Entite model) {
@@ -111,11 +116,8 @@ public class JDBCdaoGenerique {
 
 		try {
 			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ")
-						.append(model.getNomModel())
-						.append(" WHERE nom_")
-						.append(model.getNomModel())
-						.append(" = ?");
+			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
+					.append(model.getNomModel()).append(" = ?");
 			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
 			selectWhereString.setString(1, model.getNomUnique());
 			ResultSet result = selectWhereString.executeQuery();
@@ -157,11 +159,8 @@ public class JDBCdaoGenerique {
 
 		try {
 			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ")
-						.append(model.getNomModel())
-						.append(" WHERE id_")
-						.append(model.getNomModel())
-						.append(" = ?");
+			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE id_")
+					.append(model.getNomModel()).append(" = ?");
 			PreparedStatement insertRow = connection.prepareStatement(builtString.toString());
 			insertRow.setInt(1, idACherche);
 			ResultSet result = insertRow.executeQuery();
@@ -187,11 +186,8 @@ public class JDBCdaoGenerique {
 		int idRow = -1;
 		try {
 			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ")
-						.append(model.getNomModel())
-						.append(" WHERE nom_")
-						.append(model.getNomModel())
-						.append(" = ?");
+			builtString.append("SELECT * FROM ").append(model.getNomModel()).append(" WHERE nom_")
+					.append(model.getNomModel()).append(" = ?");
 			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
 			selectWhereString.setString(1, model.getNomUnique());
 			ResultSet result = selectWhereString.executeQuery();
@@ -217,42 +213,76 @@ public class JDBCdaoGenerique {
 		return bool;
 	}
 
-	public HashMap<String,Entite> selectAllFromTable(String nomTable) {
-		
-		HashMap<String,Entite> tableExistanteEnBDD = new HashMap<String,Entite>();
-		
-		String query = "SELECT * FROM "+ nomTable;
-		
+	public HashMap<String, Entite> selectAllFromTable(String nomTable) {
+
+		HashMap<String, Entite> tableExistanteEnBDD = new HashMap<String, Entite>();
+
+		String query = "SELECT * FROM " + nomTable;
+
 		try {
 			PreparedStatement selectTable = connection.prepareStatement(query);
-			//System.out.println(selectTable.toString());
-			ResultSet result =  selectTable.executeQuery();
-			
+			// System.out.println(selectTable.toString());
+			ResultSet result = selectTable.executeQuery();
+
 			while (result.next()) {
-				
+
 				switch (nomTable) {
-				case "Additif" :
-					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Additif(result.getString(2)));
+				case "Additif":
+					Additif additifEnBDD = new Additif(result.getString(2));
+					additifEnBDD.setIdEnBDD(result.getInt(1));
+					tableExistanteEnBDD.put(NettoyageString.nettoyerString(result.getString(2)), additifEnBDD);
 					break;
-				case "Allergene" :
-					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Allergene(result.getString(2)));
+				case "Allergene":
+					Allergene allergeneEnBDD = new Allergene(result.getString(2));
+					allergeneEnBDD.setIdEnBDD(result.getInt(1));
+					tableExistanteEnBDD.put(NettoyageString.nettoyerString(result.getString(2)), allergeneEnBDD);
+				case "Categorie":
+					Categorie categorieEnBDD = new Categorie(result.getString(2));
+					categorieEnBDD.setIdEnBDD(result.getInt(1));
+					tableExistanteEnBDD.put(NettoyageString.nettoyerString(result.getString(2)), categorieEnBDD);
+
 					break;
-				case "Categorie" : 
-					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Categorie(result.getString(2)));
+				case "Ingredient":
+					Ingredient ingredientEnBDD = new Ingredient(result.getString(2));
+					ingredientEnBDD.setIdEnBDD(result.getInt(1));
+					tableExistanteEnBDD.put(NettoyageString.nettoyerString(result.getString(2)), ingredientEnBDD);
 					break;
-				case "Ingredient" :
-					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Ingredient(result.getString(2)));
-					break;
-				case "Marque" : 
-					tableExistanteEnBDD.put( NettoyageString.nettoyerString(result.getString(2)), new Marque(result.getString(2)));
+				case "Marque":
+					Marque marqueEnBDD = new Marque(result.getString(2));
+					marqueEnBDD.setIdEnBDD(result.getInt(1));
+					tableExistanteEnBDD.put(NettoyageString.nettoyerString(result.getString(2)), marqueEnBDD);
 					break;
 				}
 			}
-			
-		return tableExistanteEnBDD;	
-			
+
+			return tableExistanteEnBDD;
+
 		} catch (SQLException e) {
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
 	}
+	
+	
+	public int selectMaxIDfromTable(String nomTable) {
+		
+		int maxID = -1;
+		
+		String query = "SELECT max(id_"+ nomTable +") FROM " + nomTable + ";";
+		
+		try {
+			PreparedStatement selectMaxIDTable = connection.prepareStatement(query);
+			// System.out.println(selectTable.toString());
+			ResultSet result = selectMaxIDTable.executeQuery();
+			
+			if ( result.next()) {
+				maxID = result.getInt(1);
+			}
+
+		} catch (SQLException e) {
+			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
+		}
+		
+		return maxID;		
+	}
+	
 }

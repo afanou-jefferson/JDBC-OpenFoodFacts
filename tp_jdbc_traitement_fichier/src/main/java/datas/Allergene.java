@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 public class Allergene extends Entite{
 	
-	public String nom_Allergene;
+	public static int compteurIDAllergene;
+	
+	private String nom_Allergene;
 
 	public Allergene(String nomAllergene) {
 		super();

@@ -5,7 +5,9 @@ import java.util.ArrayList;
 
 public class Ingredient extends Entite {
 
-	public String nom_Ingredient;
+	public static int compteurIDIngredient;
+	
+	private String nom_Ingredient;
 
 	public Ingredient(String nomIngredient) {
 		super();

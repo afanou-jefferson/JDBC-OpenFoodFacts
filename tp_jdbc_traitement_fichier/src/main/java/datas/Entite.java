@@ -10,8 +10,15 @@ import java.util.ArrayList;
  */
 public abstract class Entite {
 	
-	String nomClasse = getNomModel();
+	private int idEnBDD;
+	private String nomClasse = getNomModel();
 	
+	
+	public String getNomClasse() {
+		return nomClasse;
+	}
+
+
 	public String getNomModel() {
 		String nomModel = this.getClass().getSimpleName();	
 		return nomModel;
@@ -33,5 +40,15 @@ public abstract class Entite {
 	
 	public abstract String getNomUnique();
 	
+	public void setNomClasse(String nomClasse) {
+		this.nomClasse = nomClasse;
+	}
 
+	public int getIdEnBDD() {
+		return idEnBDD;
+	}
+
+	public void setIdEnBDD(int idEnBDD) {
+		this.idEnBDD = idEnBDD;
+	}
 }
