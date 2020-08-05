@@ -1,18 +1,17 @@
-package application;
+package executables;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import datas.Datas;
-import jdbc.JDBCdaoProduit;
+import core.App;
 import utils.Chrono;
 import utils.ConnectionBDD;
 
-public class ApplicationOpenFoodFacts {
+public class OpenFoodFacts {
 	
-	private static final Logger LOGGER = Logger.getLogger(ApplicationOpenFoodFacts.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(OpenFoodFacts.class.getName());
 
 	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
 
@@ -23,19 +22,18 @@ public class ApplicationOpenFoodFacts {
 		Chrono chrono = new Chrono();
 		chrono.start(); // démarrage du chrono
 		System.out.println("Lancement Programme");
-
-		JDBCdaoProduit daoProduit = new JDBCdaoProduit(connectionDB);
-		Datas myDB = new Datas(fichier, connectionDB);
+		
+		App myApp = new App(fichier, connectionDB);
 
 		chrono.stop(); // arrêt
 		System.out.println("Temps pour opérations : " + chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
 		
 
-		System.out.println("Produits insérés = " + myDB.compteurProduits);
-		System.out.println("Catégories insérés = " + myDB.compteurCategorie);
-		System.out.println("Ingrédients insérés = " + myDB.compteurIngredients);
-		System.out.println("Allergenes insérés = " + myDB.compteurAllergenes);
-		System.out.println("Additifs insérés = " + myDB.compteurAdditifs);
+		System.out.println("Produits insérés = " + myApp.compteurInsertProduits);
+		System.out.println("Catégories insérés = " + myApp.compteurInsertCategorie);
+		System.out.println("Ingrédients insérés = " + myApp.compteurInsertIngredients);
+		System.out.println("Allergenes insérés = " + myApp.compteurInsertAllergenes);
+		System.out.println("Additifs insérés = " + myApp.compteurInsertAdditifs);
 		
 
 		try {

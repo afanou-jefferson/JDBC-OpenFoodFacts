@@ -98,7 +98,20 @@ public class NettoyageString {
 				.replaceAll("[0-9]", "").replaceAll("[\\_\\-]", " ").replace("fr:", " ").replace("en:", " ")
 				.toLowerCase().trim();
 		cleanString = removeAccents(cleanString);
+		
+		if (cleanString.equals("")) {
+			cleanString = "NON RENSEIGNE";
+		}
 		return cleanString;
 	}
-
+	
+	/**
+	 * Permet de supprimer le préfixe des packages "com.mysql.cj.jdbc.ClientPreparedStatement:" au début de chaque String et ainsi autorise la concaténation .
+	 * @param requete
+	 * @return Requête prête à concaténation
+	 */
+	public static String deletePrefixe (String requete) {
+		String cleanRequete = requete.replace("com.mysql.cj.jdbc.ClientPreparedStatement: " , "");
+		return cleanRequete;		
+	}
 }

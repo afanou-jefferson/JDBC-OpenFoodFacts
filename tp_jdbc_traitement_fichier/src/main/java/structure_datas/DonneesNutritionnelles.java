@@ -1,4 +1,4 @@
-package datas;
+package structure_datas;
 
 public class DonneesNutritionnelles {
 	
