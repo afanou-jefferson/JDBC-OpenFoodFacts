@@ -126,25 +126,6 @@ public class JDBCdaoGenerique {
 
 	}
 
-	public int selectIDRowLike(Table model) {
-
-		int idRowAlike = -1;
-
-		try {
-			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ").append(model.getNomTable()).append(" WHERE nom_")
-					.append(model.getNomTable()).append(" = ?");
-			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
-			selectWhereString.setString(1, model.getNomUnique());
-			ResultSet result = selectWhereString.executeQuery();
-			if (result.next()) {
-				idRowAlike = result.getInt(1);
-			}
-		} catch (SQLException e) {
-			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
-		}
-		return idRowAlike;
-	}
 
 	public String nbAttributsToFormatSQL(Table model) {
 		String nbAttributsToFormatSQL = "(";
@@ -191,43 +172,6 @@ public class JDBCdaoGenerique {
 		return nomRow;
 	}
 
-	/**
-	 * Sert à obtenir l'ID de la entite en BDD
-	 * 
-	 * @param nomEntite
-	 * @return Retourne l'id_Cat en BDD de la Entite dont le nom est égal au param
-	 */
-	public int getIDFromNom(String nomAChercher, Table model) {
-
-		int idRow = -1;
-		try {
-			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ").append(model.getNomTable()).append(" WHERE nom_")
-					.append(model.getNomTable()).append(" = ?");
-			PreparedStatement selectWhereString = connection.prepareStatement(builtString.toString());
-			selectWhereString.setString(1, model.getNomUnique());
-			ResultSet result = selectWhereString.executeQuery();
-
-			// System.out.println( "Test controller.getIdFromNom : " +
-			// builtString.toString() + " var = " + model.getValeurIdentifiant() );
-			if (result.next()) {
-				idRow = result.getInt(1);
-			}
-
-		} catch (SQLException e) {
-			// transformer SQLException en ComptaException
-			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
-		}
-		return idRow;
-	}
-
-	public boolean rowDejaExistant(String stringAChercher, Table model) {
-		boolean bool = false;
-		if (getIDFromNom(stringAChercher, model) != 0) {
-			bool = true;
-		}
-		return bool;
-	}
 
 	public HashMap<String, Table> selectAllFromTable(String nomTable) {
 
