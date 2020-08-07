@@ -9,8 +9,17 @@ import java.util.logging.Logger;
 
 import exceptions.TraitementFichierException;
 
+/**
+ * Classe gérant la connection avec la BDD
+ * @author Exost
+ *
+ */
 public class ConnectionBDD {
-
+	
+	/**
+	 * Fourni une connection avec la BDD en utilisant le fichier configuration situé dans le dossier ressource
+	 * @return une Objet de la classe java.sql.Connection fonctionnel
+	 */
 	public static Connection getConnection() {
 		// recupere le fichier properties
 		ResourceBundle db = ResourceBundle.getBundle("databaseTraitement_Fichier");
@@ -27,6 +36,11 @@ public class ConnectionBDD {
 		}
 	}
 
+	/**
+	 * Test la connection placée en param1 et inscrits les information dans le logger placé en param2
+	 * @param connection
+	 * @param LOGGER
+	 */
 	public static void testConnection(Connection connection, Logger LOGGER) {
 		try {
 			boolean valid = connection.isValid(500);
@@ -40,6 +54,11 @@ public class ConnectionBDD {
 		}
 	}
 	
+	/**
+	 * Ferme la connexion avec la base SQL placée en param1 et inscrit l'action dans le logger placée en param2
+	 * @param connection
+	 * @param LOGGER
+	 */
 	public static void closeConnection(Connection connection, Logger LOGGER) {
 		if (connection != null) {
 			try {

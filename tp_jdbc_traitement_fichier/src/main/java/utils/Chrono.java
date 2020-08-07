@@ -1,5 +1,11 @@
 package utils;
 
+
+/**
+ * Classe utilisatire simple pour calculer les temps d'executions.
+ * @author https://fr.jeffprod.com/blog/2015/un-chronometre-en-java/
+ *
+ */
 public class Chrono {
 
 	private long tempsDepart = 0;
@@ -62,6 +68,9 @@ public class Chrono {
 		return timeToHMS(getDureeSec());
 	}
 
+	/*
+	 * Converti le temps en format texte ""1 h 26 min 3 s"
+	 */
 	public static String timeToHMS(long tempsS) {
 
 		// IN : (long) temps en secondes
