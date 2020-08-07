@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.logging.Logger;
@@ -22,11 +23,12 @@ import utils.NettoyageString;
 public class JDBCdaoGenerique {
 
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoGenerique.class.getName());
-
 	public Connection connection;
+	public ArrayList <Table> stockageRequetesInsert;
 
 	public JDBCdaoGenerique(Connection connection) {
 		this.connection = connection;
+		this.stockageRequetesInsert = new ArrayList<Table>();
 	}
 
 	/**
