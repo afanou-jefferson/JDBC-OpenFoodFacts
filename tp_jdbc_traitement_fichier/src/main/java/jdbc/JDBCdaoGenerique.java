@@ -111,12 +111,14 @@ public class JDBCdaoGenerique {
 	public void insertAll(ArrayList<String> stockRequetes) {
 
 		try {
+			this.connection.setAutoCommit(false);
 			Statement statement = this.connection.createStatement();
 			
 			for (String requete : stockRequetes) {
 				statement.addBatch(requete);
 			}
 			statement.executeBatch();
+			connection.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
