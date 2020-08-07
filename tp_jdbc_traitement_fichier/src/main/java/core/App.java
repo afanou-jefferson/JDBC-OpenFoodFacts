@@ -23,8 +23,8 @@ public class App {
 
 	File fichierEnLecture;
 	BDDCache localDB;
-	String bufferRequetes = "";
 	Connection connectionDB;
+	ArrayList <String> stockageRequetesInsert;
 	
 	public int compteurInsertCategorie = 0;
 	public int compteurInsertAdditifs = 0;
@@ -39,10 +39,15 @@ public class App {
 		this.fichierEnLecture = fichierParam;
 		this.localDB = new BDDCache(connectionParam);
 		this.connectionDB = connectionParam;
+		this.stockageRequetesInsert = new ArrayList<String>();
 
 		try {
 			List<String> lignes = FileUtils.readLines(fichierEnLecture, "UTF-8");
 			JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connectionDB);
+//			System.out.println("taille DB Produit " +  localDB.getMemoireLocaleProduitsBDD().size());
+//			System.out.println("taille DB Ingredient " +  localDB.getMemoireLocaleIngredientsBDD().size());
+
+
 
 			// Start 1 pour sauter ligne intitules categories
 			for (int i = 1; i < lignes.size(); i++) {
@@ -58,7 +63,7 @@ public class App {
 				ArrayList<Additif> listeAdditifsDuProduit = traitementAdditifs(morceaux[29]);
 
 
-				/*if (localDB.getMemoireLocaleProduitsBDD().get(nomProduitClean) == null ) {
+				if (localDB.getMemoireLocaleProduitsBDD().get(nomProduitClean) == null ) {
 					localDB.setCompteurIDProduit(localDB.getCompteurIDProduit()+1);
 					int newIDProduit = localDB.getCompteurIDProduit();
 					Produit newProduit = new Produit(newIDProduit, nomProduitClean, gradeNutriProduit, idCategorie 
@@ -66,15 +71,15 @@ public class App {
 													,listeIngredientsDuProduit
 													,listeAllergenesDuProduit 
 													,listeAdditifsDuProduit);
-					bufferRequetes = bufferRequetes + daoGenerique.insert(newProduit);
+					this.localDB.getMemoireLocaleProduitsBDD().put(nomProduitClean, newProduit);
+					this.stockageRequetesInsert.addAll(daoGenerique.insert(newProduit));
 					compteurInsertProduits++;
-				}*/			
-				
+				}						
 				System.out.println(i);
-				bufferRequetes = bufferRequetes.trim() + "\n";
 			}
-			System.out.println(bufferRequetes);
-			daoGenerique.insertAll(this.bufferRequetes);
+			
+			daoGenerique.insertAll(this.stockageRequetesInsert);
+//			System.out.println("taille DB Produit " +  localDB.getMemoireLocaleProduitsBDD().size());
 
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -92,7 +97,7 @@ public class App {
 			localDB.setCompteurIDCategorie(localDB.getCompteurIDCategorie() + 1 );
 			Categorie categorieEnLecture = new Categorie(localDB.getCompteurIDCategorie(), cleanCategorie);
 			localDB.getMemoireLocaleCategoriesBDD().put(categorieEnLecture.getNomUnique(), categorieEnLecture);
-			bufferRequetes = bufferRequetes + " " + daoGenerique.insert(categorieEnLecture);
+			this.stockageRequetesInsert.addAll(daoGenerique.insert(categorieEnLecture));
 			idCategorieBDD = categorieEnLecture.getID();
 			compteurInsertCategorie++;
 		} else {
@@ -118,7 +123,7 @@ public class App {
 				Allergene allergeneEnLecture = new Allergene(localDB.getCompteurIDAllergene(), cleanAllergene);
 				listAllergenesProduit.add(allergeneEnLecture);
 				localDB.getMemoireLocaleAllergenesBDD().put(allergeneEnLecture.getNomUnique(), allergeneEnLecture);
-				bufferRequetes = bufferRequetes + " " + daoGenerique.insert(allergeneEnLecture);
+				this.stockageRequetesInsert.addAll(daoGenerique.insert(allergeneEnLecture));
 				compteurInsertAllergenes++;
 			} else {
 				listAllergenesProduit.add((Allergene)localDB.getMemoireLocaleAllergenesBDD().get(cleanAllergene));
@@ -144,7 +149,7 @@ public class App {
 				Marque marqueEnLecture = new Marque(localDB.getCompteurIDMarque(), cleanMarque);
 				listMarquesProduit.add(marqueEnLecture);
 				localDB.getMemoireLocaleMarquesBDD().put(marqueEnLecture.getNomUnique(), marqueEnLecture);
-				bufferRequetes = bufferRequetes + " " + daoGenerique.insert(marqueEnLecture);
+				this.stockageRequetesInsert.addAll(daoGenerique.insert(marqueEnLecture));
 				compteurInsertMarques++;
 			} else {
 				listMarquesProduit.add((Marque)localDB.getMemoireLocaleMarquesBDD().get(cleanMarque));
@@ -170,7 +175,7 @@ public class App {
 				Ingredient ingredientEnLecture = new Ingredient(localDB.getCompteurIDIngredient(), cleanIngredient);
 				listIngredientsProduit.add(ingredientEnLecture);
 				localDB.getMemoireLocaleIngredientsBDD().put(ingredientEnLecture.getNomUnique(), ingredientEnLecture);
-				bufferRequetes = bufferRequetes + " " + daoGenerique.insert(ingredientEnLecture);
+				this.stockageRequetesInsert.addAll(daoGenerique.insert(ingredientEnLecture));
 				compteurInsertIngredients++;
 			} else {
 				listIngredientsProduit.add((Ingredient)localDB.getMemoireLocaleIngredientsBDD().get(cleanIngredient));
@@ -198,7 +203,7 @@ public class App {
 				Additif additifEnLecture = new Additif(localDB.getCompteurIDAdditif(), cleanAdditif);
 				listAdditifsProduit.add(additifEnLecture);
 				localDB.getMemoireLocaleAdditifsBDD().put(additifEnLecture.getNomUnique(), additifEnLecture);
-				bufferRequetes = bufferRequetes + " " + daoGenerique.insert(additifEnLecture);
+				this.stockageRequetesInsert.addAll(daoGenerique.insert(additifEnLecture));
 				compteurInsertAdditifs++;
 			} else {
 				listAdditifsProduit.add((Additif)localDB.getMemoireLocaleAdditifsBDD().get(cleanAdditif));

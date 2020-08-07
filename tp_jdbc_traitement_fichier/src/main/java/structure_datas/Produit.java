@@ -12,6 +12,15 @@ public class Produit extends Table {
 	public ArrayList<Ingredient> listeIngredientsDuProduit;
 	public ArrayList<Allergene> listeAllergenesDuProduit;
 	public ArrayList<Additif> listeAdditifsDuProduit;
+	
+
+	public Produit(int id_Produit, String nom_Produit, String grade_nutri_produit, int id_Categorie) {
+		super();
+		this.id_Produit = id_Produit;
+		this.nom_Produit = nom_Produit;
+		this.grade_nutri_produit = grade_nutri_produit;
+		this.id_Categorie = id_Categorie;
+	}
 
 	public Produit(int id_Produit, String nom_Produit, String grade_nutri_produit, int id_Categorie,
 			ArrayList<Marque> listeMarquesDuProduit, ArrayList<Ingredient> listeIngredientsDuProduit,

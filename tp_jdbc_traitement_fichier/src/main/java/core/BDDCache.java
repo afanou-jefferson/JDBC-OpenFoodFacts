@@ -109,6 +109,9 @@ public class BDDCache {
 					Marque marqueEnBDD = new Marque(result.getInt(1),result.getString(2));
 					tableExistanteEnBDD.put(marqueEnBDD.nom_Marque, marqueEnBDD);
 					break;
+				case "Produit" :
+					Produit produitEnBDD = new Produit(result.getInt(1), result.getString(2),result.getString(3), result.getInt(4));
+					tableExistanteEnBDD.put(produitEnBDD.nom_Produit, produitEnBDD);
 				}
 			}
 			return tableExistanteEnBDD;

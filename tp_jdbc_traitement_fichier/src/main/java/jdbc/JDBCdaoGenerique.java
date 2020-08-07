@@ -24,11 +24,11 @@ public class JDBCdaoGenerique {
 
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoGenerique.class.getName());
 	public Connection connection;
-	//public ArrayList <Table> stockageRequetesInsert;
+
 
 	public JDBCdaoGenerique(Connection connection) {
 		this.connection = connection;
-		//this.stockageRequetesInsert = new ArrayList<Table>();
+
 	}
 
 	/**
@@ -38,9 +38,9 @@ public class JDBCdaoGenerique {
 	 * @return Une String qui a pour valeur la requête SQL à exécuter pour insérer
 	 *         l'objet en paramètre
 	 **/
-	public String insert(Table model) {
+	public ArrayList<String> insert(Table model) {
 
-		String bufferQuery = "";
+		ArrayList<String> bufferRequetes = new ArrayList<String>();
 
 		try {
 			if (model.getNomTable() == Produit.class.getSimpleName()) {
@@ -53,15 +53,14 @@ public class JDBCdaoGenerique {
 				insertProduit.setString(2, newProduit.nom_Produit);
 				insertProduit.setString(3, newProduit.grade_nutri_produit);
 				insertProduit.setInt(4, newProduit.id_Categorie);
-				bufferQuery = bufferQuery + " " + insertProduit.toString();
+				bufferRequetes.add(NettoyageString.deletePrefixe(insertProduit.toString()));
 				
 				for (Marque marque : newProduit.listeMarquesDuProduit) {
 					PreparedStatement insertJointure = connection.prepareStatement(
 							"INSERT INTO `jointure_prod_marque`(`id_produit`, `id_Marque`) VALUES (?,?);");
 					insertJointure.setInt(1, newProduit.id_Produit);
 					insertJointure.setInt(2, marque.id_Marque);
-					System.out.println(insertJointure.toString());
-					bufferQuery = bufferQuery + " " + insertJointure.toString() ;
+					bufferRequetes.add(NettoyageString.deletePrefixe(insertJointure.toString()));
 				}
 
 				for (Ingredient ingredient : newProduit.listeIngredientsDuProduit) {
@@ -69,8 +68,7 @@ public class JDBCdaoGenerique {
 							"INSERT INTO `jointure_prod_ingredient`(`id_produit`, `id_Ingredient`) VALUES (?,?);");
 					insertJointure.setInt(1, newProduit.id_Produit);
 					insertJointure.setInt(2, ingredient.id_Ingredient);
-					bufferQuery = bufferQuery + " " +  insertJointure.toString();
-
+					bufferRequetes.add(NettoyageString.deletePrefixe(insertJointure.toString()));
 				}
 
 				for (Allergene allergene : newProduit.listeAllergenesDuProduit) {
@@ -78,7 +76,7 @@ public class JDBCdaoGenerique {
 							"INSERT INTO `jointure_prod_allergene`(`id_produit`, `id_Allergene`) VALUES (?,?);");
 					insertJointure.setInt(1, newProduit.id_Produit);
 					insertJointure.setInt(2, allergene.id_Allergene);
-					bufferQuery = bufferQuery + " " +  insertJointure.toString();
+					bufferRequetes.add(NettoyageString.deletePrefixe(insertJointure.toString()));
 				}
 
 				for (Additif additif : newProduit.listeAdditifsDuProduit) {
@@ -86,7 +84,7 @@ public class JDBCdaoGenerique {
 							"INSERT INTO `jointure_prod_additif`(`id_produit`, `id_Additif`) VALUES (?,?);");
 					insertJointure.setInt(1, newProduit.id_Produit);
 					insertJointure.setInt(2, additif.id_Additif);
-					bufferQuery = bufferQuery + " " +  insertJointure.toString();
+					bufferRequetes.add(NettoyageString.deletePrefixe(insertJointure.toString()));
 				}		
 			} else {
 					StringBuilder builtString = new StringBuilder();
@@ -99,24 +97,26 @@ public class JDBCdaoGenerique {
 					
 					for (int i = 1; i <= model.getValeurAttributsTable().size() ; i++) {
 						insert.setString(i, model.getValeurAttributsTable().get(i - 1));
-					}
-					
-					bufferQuery = insert.toString();
-			}
+					}				
+					bufferRequetes.add(NettoyageString.deletePrefixe(insert.toString()));			}
 
 			} catch (SQLException e) {
 				// transformer SQLException en ComptaException
 				throw new TraitementFichierException("Erreur à l'insertion de la table : " + model.getNomTable() , e);
 			}
-		//System.out.println(NettoyageString.deletePrefixe(bufferQuery));
-		return NettoyageString.deletePrefixe(bufferQuery);
+
+		return bufferRequetes;
 	}
 	
-	public void insertAll(String buffedQuery) {
+	public void insertAll(ArrayList<String> stockRequetes) {
 
 		try {
-			PreparedStatement insert = connection.prepareStatement(buffedQuery);
-			insert.execute();
+			Statement statement = this.connection.createStatement();
+			
+			for (String requete : stockRequetes) {
+				statement.addBatch(requete);
+			}
+			statement.executeBatch();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
