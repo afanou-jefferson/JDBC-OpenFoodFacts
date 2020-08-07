@@ -24,11 +24,11 @@ public class JDBCdaoGenerique {
 
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoGenerique.class.getName());
 	public Connection connection;
-	public ArrayList <Table> stockageRequetesInsert;
+	//public ArrayList <Table> stockageRequetesInsert;
 
 	public JDBCdaoGenerique(Connection connection) {
 		this.connection = connection;
-		this.stockageRequetesInsert = new ArrayList<Table>();
+		//this.stockageRequetesInsert = new ArrayList<Table>();
 	}
 
 	/**
