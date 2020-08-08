@@ -16,6 +16,7 @@ import structure_datas.Categorie;
 import structure_datas.Ingredient;
 import structure_datas.Marque;
 import structure_datas.Produit;
+import utils.Chrono;
 import utils.ConnectionBDD;
 import utils.NettoyageString;
 
@@ -40,14 +41,13 @@ public class App {
 		this.localDB = new BDDCache(connectionParam);
 		this.connectionDB = connectionParam;
 		this.stockageRequetesInsert = new ArrayList<String>();
-
+		
+		Chrono chronoLecture = new Chrono();
+		chronoLecture.start(); // démarrage du chrono
+		
 		try {
 			List<String> lignes = FileUtils.readLines(fichierEnLecture, "UTF-8");
 			JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connectionDB);
-//			System.out.println("taille DB Produit " +  localDB.getMemoireLocaleProduitsBDD().size());
-//			System.out.println("taille DB Ingredient " +  localDB.getMemoireLocaleIngredientsBDD().size());
-
-
 
 			// Start 1 pour sauter ligne intitules categories
 			for (int i = 1; i < lignes.size(); i++) {
@@ -57,20 +57,17 @@ public class App {
 				String nomProduitClean = NettoyageString.nettoyerString(morceaux[2]);
 				String gradeNutriProduit = morceaux[3];
 				int idCategorie = traitementCategorie(morceaux[0]);
-				ArrayList<Marque> listeMarquesDuProduit = traitementMarques(morceaux[1]);
-				ArrayList<Ingredient> listeIngredientsDuProduit = traitementIngredients(morceaux[4]);
-				ArrayList<Allergene> listeAllergenesDuProduit = traitementAllergenes(morceaux[28]);
-				ArrayList<Additif> listeAdditifsDuProduit = traitementAdditifs(morceaux[29]);
 
 
 				if (localDB.getMemoireLocaleProduitsBDD().get(nomProduitClean) == null ) {
 					localDB.setCompteurIDProduit(localDB.getCompteurIDProduit()+1);
 					int newIDProduit = localDB.getCompteurIDProduit();
 					Produit newProduit = new Produit(newIDProduit, nomProduitClean, gradeNutriProduit, idCategorie 
-													,listeMarquesDuProduit 
-													,listeIngredientsDuProduit
-													,listeAllergenesDuProduit 
-													,listeAdditifsDuProduit);
+													,traitementMarques(morceaux[1])
+													,traitementIngredients(morceaux[4])
+													,traitementAllergenes(morceaux[28])
+													,traitementAdditifs(morceaux[29]));
+					
 					this.localDB.getMemoireLocaleProduitsBDD().put(nomProduitClean, newProduit);
 					this.stockageRequetesInsert.addAll(daoGenerique.insert(newProduit));
 					compteurInsertProduits++;
@@ -78,14 +75,28 @@ public class App {
 				System.out.println(i);
 			}
 			
+			chronoLecture.stop(); // arrêt
+			System.out.println("Temps pour Lecture : " + chronoLecture.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
+			
+			Chrono chronoInsert = new Chrono();
+			chronoInsert.start(); // démarrage du chrono
+			
+			
 			daoGenerique.insertAll(this.stockageRequetesInsert);
-//			System.out.println("taille DB Produit " +  localDB.getMemoireLocaleProduitsBDD().size());
+			
+			chronoInsert.stop(); // arrêt
+			System.out.println("Temps pour Insert : " + chronoInsert.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
 
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
 	}
 	
+	/**
+	 * Effectue les traitements sur une String qui contient les infos sur la catérogie d'un produit.
+	 * @param morceauString
+	 * @return un integer qui correspond à l'ID de la catégorie dans la BDD
+	 */
 	public int traitementCategorie(String morceauString) {
 
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connectionDB);
@@ -107,6 +118,11 @@ public class App {
 		return idCategorieBDD;
 	}
 
+	/**
+	 * Effectue les traitements sur une String qui contient les infos sur les Allergenes d'un produit.
+	 * @param morceauString
+	 * @return une ArrayList d'objet de Type Allergene
+	 */
 	public ArrayList<Allergene> traitementAllergenes(String morceauString) {
 
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connectionDB);
@@ -132,7 +148,11 @@ public class App {
 		return listAllergenesProduit;
 	}
 
-	
+	/**
+	 * Effectue les traitements sur une String qui contient les infos sur les Marques d'un produit.
+	 * @param morceauString
+	 * @return une ArrayList d'objet de Type Marque
+	 */
 	public ArrayList<Marque> traitementMarques(String morceauString) {
 
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connectionDB);
@@ -158,7 +178,11 @@ public class App {
 		return listMarquesProduit;
 	}
 
-	
+	/**
+	 * Effectue les traitements sur une String qui contient les infos sur les Ingredients d'un produit.
+	 * @param morceauString
+	 * @return une ArrayList d'objet de Type Inredient
+	 */
 	public ArrayList<Ingredient> traitementIngredients(String morceauString) {
 
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connectionDB);
@@ -184,6 +208,11 @@ public class App {
 		return listIngredientsProduit;
 	}
 	
+	/**
+	 * Effectue les traitements sur une String qui contient les infos sur les additifs d'un produit.
+	 * @param morceauString
+	 * @return une Arraylist d'objet de type Additif
+	 */
 	public ArrayList<Additif> traitementAdditifs(String morceauString) {
 
 		JDBCdaoGenerique daoGenerique = new JDBCdaoGenerique(this.connectionDB);

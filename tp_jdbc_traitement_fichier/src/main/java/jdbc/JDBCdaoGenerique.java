@@ -20,6 +20,11 @@ import structure_datas.Marque;
 import structure_datas.Produit;
 import utils.NettoyageString;
 
+/**
+ * Classe regroupant les méthodes permettant l'interaction avec la BDD via JDBC
+ * @author Exost
+ *
+ */
 public class JDBCdaoGenerique {
 
 	private static final Logger LOGGER = Logger.getLogger(JDBCdaoGenerique.class.getName());
@@ -108,6 +113,11 @@ public class JDBCdaoGenerique {
 		return bufferRequetes;
 	}
 	
+	/**
+	 * Execute la liste de requêtes placées en paramètres.
+	 * Utilise le batching pour de meilleurs performances.
+	 * @param stockRequetes
+	 */
 	public void insertAll(ArrayList<String> stockRequetes) {
 
 		try {
@@ -126,7 +136,11 @@ public class JDBCdaoGenerique {
 
 	}
 
-
+	/**
+	 * Permet d'obtenir une String à insérer au sein PreparedStatement SQL en fonction du nombre d'attributs de l'objet
+	 * @param model
+	 * @return String au format (?,?,?,?) si l'objet Table en paramètre dispose de 4 attributs
+	 */
 	public String nbAttributsToFormatSQL(Table model) {
 		String nbAttributsToFormatSQL = "(";
 		for (int i = 1; i <= model.getNbAttributsTable(); i++) {
@@ -139,6 +153,11 @@ public class JDBCdaoGenerique {
 		return nbAttributsToFormatSQL;
 	}
 
+	/**
+	 * Récupère la valeur des l'objet model placée en paramètre et retourne les valeurs de ses attributs au format SQL
+	 * @param model
+	 * @return String au format (valeurAttribut1, valeurAttribut2, valeurAttribut3)
+	 */
 	public String attributsToFormatSQL(Table model) {
 
 		String stringAttributs = "(";
@@ -151,28 +170,12 @@ public class JDBCdaoGenerique {
 		return stringAttributs;
 	}
 
-	public String getNomFromID(int idACherche, Table model) {
-		String nomRow = "ROW INNEXISTANT";
-
-		try {
-			StringBuilder builtString = new StringBuilder();
-			builtString.append("SELECT * FROM ").append(model.getNomTable()).append(" WHERE id_")
-					.append(model.getNomTable()).append(" = ?");
-			PreparedStatement insertRow = connection.prepareStatement(builtString.toString());
-			insertRow.setInt(1, idACherche);
-			ResultSet result = insertRow.executeQuery();
-			if (result.next()) {
-				nomRow = result.getString(2);
-			}
-
-		} catch (SQLException e) {
-			// transformer SQLException en ComptaException
-			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
-		}
-		return nomRow;
-	}
-
-
+	/**
+	 * Interoge la BDD distante pour obtenir tous les enregistrements de la table nomTable placée en paramètres, 
+	 * puis les retourne sous forme d'une hashMap.
+	 * @param nomTable
+	 * @return Hashmap au format <nomTable, objetDeTypeTable>
+	 */
 	public HashMap<String, Table> selectAllFromTable(String nomTable) {
 
 		HashMap<String, Table> tableExistanteEnBDD = new HashMap<String, Table>();
@@ -215,7 +218,12 @@ public class JDBCdaoGenerique {
 			throw new TraitementFichierException("Erreur de communication avec la base de données", e);
 		}
 	}
-
+	
+	/**
+	 * Intéroge la BDD pour obtenir le plus grand ID unique de la table correspondant à la String nomTable placée en paramètre
+	 * @param nomTable
+	 * @return integer correspondant au max(ID) de la table nomTable
+	 */
 	public int selectMaxIDfromTable(String nomTable) {
 
 		int maxID = -1;
