@@ -1,6 +1,7 @@
 package structure_datas;
 
-public class DonneesNutritionnelles {
+// Classe inutilisée car traitement de la nutrition non exigé.
+public class Nutrition {
 	
 	//Public obligé pour le moment pour parcourir les attributs de la classe dynamiquement
 	//TO DO Trouver une technique pour les passer en private mais pouvoir parcourir les attributs de la classe 
@@ -23,20 +24,18 @@ public class DonneesNutritionnelles {
 	public double vitB12100g;
 	public double calcium100g;
 	public double magnesium100g;
-	public double irong100g; // En double, à check pour pour opti
+	public double irong100g; // En double avec fer100g, à check pour pour opti vitesse
 	public double fer100g;
 	public double betaCarotene100g;
 	public double presenceHuilePalme;
 
 	
-	
-	
-	public DonneesNutritionnelles() {}
+	public Nutrition() {}
 
 
 
 
-	public DonneesNutritionnelles(double energie100g, double graisse100g, double sucres100g, double fibres100g,
+	public Nutrition(double energie100g, double graisse100g, double sucres100g, double fibres100g,
 			double proteines100g, double sel100g, double vitA100g, double vitD100g, double vitE100g, double vitK100g,
 			double vitC100g, double vitB1_100g, double vitB2_100g, double vitPP100g, double vitB6100g, double vitB9100g,
 			double vitB12100g, double calcium100g, double magnesium100g, double irong100g, double fer100g,
@@ -80,9 +79,10 @@ public class DonneesNutritionnelles {
 				+ ", vitB12100g=" + vitB12100g + ", calcium100g=" + calcium100g + ", magnesium100g=" + magnesium100g
 				+ ", irong100g=" + irong100g + ", fer100g=" + fer100g + ", betaCarotene100g=" + betaCarotene100g
 				+ ", presenceHuilePalme=" + presenceHuilePalme + "]";
-	};
-	
-	
-	
+	}
+
+
+
+
 
 }

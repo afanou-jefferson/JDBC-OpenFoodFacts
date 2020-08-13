@@ -2,7 +2,6 @@ package core;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.ref.Cleaner.Cleanable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,6 @@ import structure_datas.Ingredient;
 import structure_datas.Marque;
 import structure_datas.Produit;
 import utils.Chrono;
-import utils.ConnectionBDD;
 import utils.NettoyageString;
 
 public class App {

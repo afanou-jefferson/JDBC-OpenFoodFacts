@@ -42,9 +42,10 @@ public class OpenFoodFacts {
 			chrono.start(); // démarrage du chrono
 			System.out.println("Lancement Programme");
 
+			//Lance le traitement du fichier et l'insertion en BDD
 			App myApp = new App(fichier, connectionDB);
 
-			chrono.stop(); // arrêt
+			chrono.stop(); // arrêt chrono
 			System.out.println("Temps TOTAL : " + chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
 
 			System.out.println("Produits insérés = " + myApp.compteurInsertProduits);
