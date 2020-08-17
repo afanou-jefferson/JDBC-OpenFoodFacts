@@ -50,7 +50,7 @@ public class TestJeuReduit {
 		App myApp = new App(fichier, connectionDB);
 		
 		 
-		chrono.stop(); // arrêt
+		chrono.stop(); // arrêt chrono
 		System.out.println("Temps TOTAL : " + chrono.getDureeTxt()); // affichage au format "1 h 26 min 32 s"
 		
 		System.out.println("Produits insérés = " + myApp.compteurInsertProduits);
