@@ -18,6 +18,7 @@ import structure_datas.Produit;
 import utils.Chrono;
 import utils.NettoyageString;
 
+//
 public class App {
 
 	File fichierEnLecture;
