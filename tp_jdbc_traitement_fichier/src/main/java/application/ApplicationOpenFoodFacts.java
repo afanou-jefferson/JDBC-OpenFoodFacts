@@ -10,7 +10,6 @@ import jdbc.JDBCdaoProduit;
 import utils.Chrono;
 import utils.ConnectionBDD;
 
-
 public class ApplicationOpenFoodFacts {
 	
 	private static final Logger LOGGER = Logger.getLogger(ApplicationOpenFoodFacts.class.getName());
